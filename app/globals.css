@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --header-bg: #3C222F;
+  --text-color: #D6A767;
+  --logo-bg: #3C222F;
+  --logo-color: #D9A865;
+  --optional-bg: #E6D0B1;
+  --black: #000000;
+  --white: #FFFFFF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  color: var(--black);
+  background-color: var(--white);
+}
+
+.btn-primary {
+  @apply bg-[#D6A767] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#C19653] transition-colors duration-300;
+}
+
+.btn-secondary {
+  @apply bg-[#3C222F] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#4A2A37] transition-colors duration-300;
+}
+
+.btn-outline {
+  @apply border-2 border-[#D6A767] text-[#D6A767] px-6 py-3 rounded-lg font-semibold hover:bg-[#D6A767] hover:text-white transition-all duration-300;
+}
+
+.section-gold {
+  background: linear-gradient(135deg, #D6A767 0%, #E8C088 100%);
+}
+
+.section-dark {
+  background: linear-gradient(135deg, #3C222F 0%, #4A2A37 100%);
+}
+
+.section-optional {
+  background-color: #E6D0B1;
+}
+
+.text-gold {
+  color: #D6A767;
+}
+
+.text-logo {
+  color: #D9A865;
+}
+
+.text-header {
+  color: #D6A767;
+}
+
+.border-gold {
+  border-color: #D6A767;
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, rgba(214, 167, 103, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+.header-dark {
+  background-color: #3C222F;
+}
+
+/* Custom focus styles */
+.focus-gold:focus {
+  @apply ring-2 ring-[#D6A767] border-transparent;
+}
