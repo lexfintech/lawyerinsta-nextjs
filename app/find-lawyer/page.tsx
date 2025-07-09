@@ -3,8 +3,25 @@
 import { useState } from 'react';
 import { Search, MapPin, Star, Crown, Phone, Mail, Award } from 'lucide-react';
 
+// Type definitions
+type Lawyer = {
+  name: string;
+  experience: number;
+  premium: boolean;
+  rating: number;
+  cases: number;
+  phone: string;
+  email: string;
+};
+
+type Specialization = 'criminal' | 'corporate' | 'art' | 'animal' | 'banking' | 'business' | 'cyber';
+
+type LawyerData = {
+  [K in Specialization]: Lawyer[];
+};
+
 // Dummy lawyer data
-const lawyerData = {
+const lawyerData: LawyerData = {
   criminal: [
     { name: 'Adv. Rajesh Kumar', experience: 15, premium: true, rating: 4.9, cases: 250, phone: '+91 98765 43210', email: 'rajesh@example.com' },
     { name: 'Adv. Priya Sharma', experience: 12, premium: true, rating: 4.8, cases: 180, phone: '+91 98765 43211', email: 'priya@example.com' },
@@ -56,7 +73,7 @@ const cities = [
   'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur'
 ];
 
-const specializations = [
+const specializations: { value: Specialization; label: string }[] = [
   { value: 'criminal', label: 'Criminal Law' },
   { value: 'corporate', label: 'Corporate Law' },
   { value: 'art', label: 'Art Law' },
@@ -69,12 +86,12 @@ const specializations = [
 export default function FindLawyer() {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedSpecialization, setSelectedSpecialization] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<Lawyer[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = () => {
-    if (selectedSpecialization && lawyerData[selectedSpecialization]) {
-      setSearchResults(lawyerData[selectedSpecialization]);
+    if (selectedSpecialization && lawyerData[selectedSpecialization as Specialization]) {
+      setSearchResults(lawyerData[selectedSpecialization as Specialization]);
       setHasSearched(true);
     } else {
       setSearchResults([]);
@@ -155,7 +172,7 @@ export default function FindLawyer() {
                       <div className="flex items-center space-x-2 mb-2">
                         <h3 className="text-xl font-semibold text-black">{lawyer.name}</h3>
                         {lawyer.premium && (
-                          <Crown className="h-5 w-5 text-[#D6A767]" title="Premium Lawyer" />
+                          <Crown className="h-5 w-5 text-[#D6A767]" />
                         )}
                       </div>
                       <p className="text-gray-600 text-sm">
