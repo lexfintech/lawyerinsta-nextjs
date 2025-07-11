@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { Scale, Mail, Phone } from 'lucide-react';
+import Logo from '../public/assets/images/logo.jpg';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -8,39 +10,62 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Logo and Description */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center space-x-2">
-              <Scale className="h-8 w-8 text-[#D9A865]" />
-              <span className="text-2xl font-bold text-[#D6A767]">LawyerInsta</span>
+            <Link href="/" className="flex items-center space-x-2 w-[70%]">
+              <Image src={Logo} alt="LawyerInsta Logo" className="w-[80%]" />
             </Link>
-            <p className="text-[#D6A767] text-opacity-80 text-sm">
-              India's Largest & Most Trusted Lawyer Directory. Making qualified legal help accessible, 
-              transparent, and instantaneous for every citizen of India.
+            <p className="text-[#D6A767] text-opacity-80 text-md">
+              India's Largest & Most Trusted Lawyer Directory. Making qualified
+              legal help accessible, transparent, and instantaneous for every
+              citizen of India.
             </p>
           </div>
 
           {/* Important Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#D9A865]">Important Links</h3>
-            <div className="space-y-2">
-              <Link href="/find-lawyer" className="block text-[#D6A767] hover:text-[#D9A865] transition-colors">
+            <h3 className="text-lg font-semibold mb-4 text-[#D9A865]">
+              Important Links
+            </h3>
+            <div className="space-y-2 text-md">
+              <Link
+                href="/find-lawyer"
+                className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
+              >
                 Find A Lawyer
               </Link>
-              <Link href="/register-lawyer" className="block text-[#D6A767] hover:text-[#D9A865] transition-colors">
+              <Link
+                href="/register-lawyer"
+                className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
+              >
                 Register As A Lawyer
               </Link>
-              <Link href="/careers" className="block text-[#D6A767] hover:text-[#D9A865] transition-colors">
+              <Link
+                href="/careers"
+                className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
+              >
                 Careers
               </Link>
-              <Link href="/terms" className="block text-[#D6A767] hover:text-[#D9A865] transition-colors">
+              <Link
+                href="/terms"
+                className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
+              >
                 Terms of Service
               </Link>
-              <Link href="/about" className="block text-[#D6A767] hover:text-[#D9A865] transition-colors">
+              <Link
+                href="/about"
+                className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
+              >
                 About Us
               </Link>
-              <Link href="/contact" className="block text-[#D6A767] hover:text-[#D9A865] transition-colors">
+              <Link
+                href="/contact"
+                className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
+              >
                 Contact Us
               </Link>
-              <Link href="/privacy" className="block text-[#D6A767] hover:text-[#D9A865] transition-colors">
+              <Link
+                href="/privacy"
+                className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
+              >
                 Privacy Policy
               </Link>
             </div>
@@ -48,17 +73,25 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#D9A865]">Contact Info</h3>
+            <h3 className="text-lg font-semibold mb-4 text-[#D9A865]">
+              Contact Info
+            </h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-[#D9A865]" />
-                <a href="mailto:Info@lawyerinsta.com" className="text-[#D6A767] hover:text-[#D9A865] transition-colors">
+                <a
+                  href="mailto:Info@lawyerinsta.com"
+                  className="text-[#D6A767] hover:text-[#D9A865] transition-colors"
+                >
                   Info@lawyerinsta.com
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-[#D9A865]" />
-                <a href="tel:+919582723995" className="text-[#D6A767] hover:text-[#D9A865] transition-colors">
+                <a
+                  href="tel:+919582723995"
+                  className="text-[#D6A767] hover:text-[#D9A865] transition-colors"
+                >
                   +91 95827 23995
                 </a>
               </div>

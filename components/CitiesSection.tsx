@@ -17,10 +17,12 @@ export default function CitiesSection() {
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-black mb-4">Find a Lawyer by City</h2>
+          <h2 className="text-4xl font-bold text-black mb-4">
+            Find a Lawyer by City
+          </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Connect with verified lawyers in major Indian cities. Choose your city to find 
-            the best legal professionals near you.
+            Connect with verified lawyers in major Indian cities. Choose your
+            city to find the best legal professionals near you.
           </p>
         </div>
 
@@ -39,7 +41,9 @@ export default function CitiesSection() {
                   <h3 className="text-xl font-semibold text-black group-hover:text-[#D6A767] transition-colors">
                     {city.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">{city.lawyers} Lawyers</p>
+                  <p className="text-gray-600 text-sm">
+                    {city.lawyers} Lawyers
+                  </p>
                 </div>
               </div>
             </Link>

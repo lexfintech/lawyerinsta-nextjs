@@ -9,36 +9,36 @@ const testimonials = [
     location: 'Mumbai',
     rating: 5,
     text: 'LawyerInsta helped me find an excellent property lawyer within hours. The process was smooth and transparent. Highly recommended!',
-    case: 'Property Dispute'
+    case: 'Property Dispute',
   },
   {
     name: 'Rajesh Kumar',
     location: 'Delhi',
     rating: 5,
     text: 'Found the perfect criminal lawyer for my case. The platform is user-friendly and all lawyers are verified. Great service!',
-    case: 'Criminal Defense'
+    case: 'Criminal Defense',
   },
   {
     name: 'Anita Patel',
     location: 'Bangalore',
     rating: 5,
     text: 'Excellent platform for finding family lawyers. The lawyer I connected with was professional and helped resolve my case quickly.',
-    case: 'Family Law'
+    case: 'Family Law',
   },
   {
     name: 'Vikram Singh',
     location: 'Chennai',
     rating: 5,
     text: 'LawyerInsta made it easy to find a corporate lawyer for my startup. The verification process gives confidence in the platform.',
-    case: 'Corporate Law'
+    case: 'Corporate Law',
   },
   {
     name: 'Meera Joshi',
     location: 'Pune',
     rating: 5,
     text: 'Quick and efficient service. Found a great divorce lawyer who handled my case with care and professionalism.',
-    case: 'Divorce Case'
-  }
+    case: 'Divorce Case',
+  },
 ];
 
 export default function TestimonialsSection() {
@@ -49,7 +49,10 @@ export default function TestimonialsSection() {
   };
 
   const prevTestimonial = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length);
+    setCurrentIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + testimonials.length) % testimonials.length,
+    );
   };
 
   useEffect(() => {
@@ -61,9 +64,12 @@ export default function TestimonialsSection() {
     <section className="section-gold py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">What Our Clients Say</h2>
+          <h2 className="text-4xl font-bold text-white mb-4">
+            What Our Clients Say
+          </h2>
           <p className="text-xl text-white text-opacity-90 max-w-3xl mx-auto">
-            Thousands of satisfied clients have found their perfect legal representation through LawyerInsta.
+            Thousands of satisfied clients have found their perfect legal
+            representation through LawyerInsta.
           </p>
         </div>
 
@@ -73,7 +79,10 @@ export default function TestimonialsSection() {
               {/* Stars */}
               <div className="flex justify-center space-x-1">
                 {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                  <Star key={i} className="h-6 w-6 text-[#D6A767] fill-current" />
+                  <Star
+                    key={i}
+                    className="h-6 w-6 text-[#D6A767] fill-current"
+                  />
                 ))}
               </div>
 
@@ -88,7 +97,8 @@ export default function TestimonialsSection() {
                   {testimonials[currentIndex].name}
                 </div>
                 <div className="text-gray-600">
-                  {testimonials[currentIndex].location} • {testimonials[currentIndex].case}
+                  {testimonials[currentIndex].location} •{' '}
+                  {testimonials[currentIndex].case}
                 </div>
               </div>
             </div>

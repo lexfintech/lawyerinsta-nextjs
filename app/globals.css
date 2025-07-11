@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --header-bg: #3C222F;
-  --text-color: #D6A767;
-  --logo-bg: #3C222F;
-  --logo-color: #D9A865;
-  --optional-bg: #E6D0B1;
+  --header-bg: #3c222f;
+  --text-color: #d6a767;
+  --logo-bg: #3c222f;
+  --logo-color: #d9a865;
+  --optional-bg: #e6d0b1;
   --black: #000000;
-  --white: #FFFFFF;
+  --white: #ffffff;
 }
 
 * {
@@ -25,6 +25,13 @@ body {
   background-color: var(--white);
 }
 
+.input-style {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent;
+}
+.eye-toggle {
+  @apply absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600;
+}
+
 .btn-primary {
   @apply bg-[#D6A767] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#C19653] transition-colors duration-300;
 }
@@ -38,39 +45,43 @@ body {
 }
 
 .section-gold {
-  background: linear-gradient(135deg, #D6A767 0%, #E8C088 100%);
+  background: linear-gradient(135deg, #d6a767 0%, #e8c088 100%);
 }
 
 .section-dark {
-  background: linear-gradient(135deg, #3C222F 0%, #4A2A37 100%);
+  background: linear-gradient(135deg, #3c222f 0%, #4a2a37 100%);
 }
 
 .section-optional {
-  background-color: #E6D0B1;
+  background-color: #e6d0b1;
 }
 
 .text-gold {
-  color: #D6A767;
+  color: #d6a767;
 }
 
 .text-logo {
-  color: #D9A865;
+  color: #d9a865;
 }
 
 .text-header {
-  color: #D6A767;
+  color: #d6a767;
 }
 
 .border-gold {
-  border-color: #D6A767;
+  border-color: #d6a767;
 }
 
 .hero-gradient {
-  background: linear-gradient(135deg, rgba(214, 167, 103, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(214, 167, 103, 0.1) 0%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
 }
 
 .header-dark {
-  background-color: #3C222F;
+  background-color: #3c222f;
 }
 
 /* Custom focus styles */
