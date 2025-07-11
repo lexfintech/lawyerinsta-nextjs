@@ -1,22 +1,22 @@
 'use client';
- 
+
 import { useState } from 'react';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Award, 
-  Calendar, 
-  Star, 
-  Edit3, 
-  Save, 
-  X, 
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Award,
+  Calendar,
+  Star,
+  Edit3,
+  Save,
+  X,
   Camera,
   Crown,
   Briefcase,
   GraduationCap,
-  Scale
+  Scale,
 } from 'lucide-react';
 
 // Mock lawyer data
@@ -40,8 +40,10 @@ const initialLawyerData = {
   totalCases: 250,
   successRate: 85,
   isPremium: true,
-  profileImage: 'https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=400',
-  coverImage: 'https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg?auto=compress&cs=tinysrgb&w=1200'
+  profileImage:
+    'https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=400',
+  coverImage:
+    'https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg?auto=compress&cs=tinysrgb&w=1200',
 };
 
 export default function LawyerProfile() {
@@ -65,9 +67,9 @@ export default function LawyerProfile() {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setEditData(prev => ({
+    setEditData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -83,9 +85,9 @@ export default function LawyerProfile() {
         reader.onload = (e) => {
           const imageUrl = e.target?.result as string;
           if (type === 'profile') {
-            setEditData(prev => ({ ...prev, profileImage: imageUrl }));
+            setEditData((prev) => ({ ...prev, profileImage: imageUrl }));
           } else {
-            setEditData(prev => ({ ...prev, coverImage: imageUrl }));
+            setEditData((prev) => ({ ...prev, coverImage: imageUrl }));
           }
         };
         reader.readAsDataURL(file);
@@ -98,9 +100,9 @@ export default function LawyerProfile() {
     <div className="min-h-screen bg-gray-50">
       {/* Cover Photo Section */}
       <div className="relative h-64 bg-gradient-to-r from-[#3C222F] to-[#D6A767]">
-        <img 
-          src={isEditing ? editData.coverImage : lawyerData.coverImage} 
-          alt="Cover" 
+        <img
+          src={isEditing ? editData.coverImage : lawyerData.coverImage}
+          alt="Cover"
           className="w-full h-full object-cover"
         />
         {isEditing && (
@@ -120,9 +122,11 @@ export default function LawyerProfile() {
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
               {/* Profile Picture */}
               <div className="relative">
-                <img 
-                  src={isEditing ? editData.profileImage : lawyerData.profileImage} 
-                  alt="Profile" 
+                <img
+                  src={
+                    isEditing ? editData.profileImage : lawyerData.profileImage
+                  }
+                  alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
                 {isEditing && (
@@ -143,14 +147,18 @@ export default function LawyerProfile() {
                       <input
                         type="text"
                         value={editData.firstName}
-                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange('firstName', e.target.value)
+                        }
                         className="text-2xl font-bold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
                         placeholder="First Name"
                       />
                       <input
                         type="text"
                         value={editData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange('lastName', e.target.value)
+                        }
                         className="text-2xl font-bold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
                         placeholder="Last Name"
                       />
@@ -181,14 +189,18 @@ export default function LawyerProfile() {
                 {isEditing ? (
                   <select
                     value={editData.specialization}
-                    onChange={(e) => handleInputChange('specialization', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange('specialization', e.target.value)
+                    }
                     className="text-lg text-[#D6A767] font-semibold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
                   >
                     <option value="Criminal Law">Criminal Law</option>
                     <option value="Corporate Law">Corporate Law</option>
                     <option value="Art Law">Art Law</option>
                     <option value="Animal Law">Animal Law</option>
-                    <option value="Banking & Finance Law">Banking & Finance Law</option>
+                    <option value="Banking & Finance Law">
+                      Banking & Finance Law
+                    </option>
                     <option value="Business Law">Business Law</option>
                     <option value="Cyber Law">Cyber Law</option>
                     <option value="Family Law">Family Law</option>
@@ -196,7 +208,9 @@ export default function LawyerProfile() {
                     <option value="Labor Law">Labor Law</option>
                   </select>
                 ) : (
-                  <p className="text-lg text-[#D6A767] font-semibold">{lawyerData.specialization}</p>
+                  <p className="text-lg text-[#D6A767] font-semibold">
+                    {lawyerData.specialization}
+                  </p>
                 )}
               </div>
 
@@ -241,7 +255,7 @@ export default function LawyerProfile() {
               <User className="h-5 w-5 text-[#D6A767]" />
               <span>Contact Information</span>
             </h2>
-            
+
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-[#D6A767]" />
@@ -290,7 +304,9 @@ export default function LawyerProfile() {
                 {isEditing ? (
                   <textarea
                     value={editData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange('address', e.target.value)
+                    }
                     className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none resize-none"
                     rows={2}
                   />
@@ -307,7 +323,7 @@ export default function LawyerProfile() {
               <Briefcase className="h-5 w-5 text-[#D6A767]" />
               <span>Professional Details</span>
             </h2>
-            
+
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Scale className="h-5 w-5 text-[#D6A767]" />
@@ -317,11 +333,15 @@ export default function LawyerProfile() {
                     <input
                       type="text"
                       value={editData.barNumber}
-                      onChange={(e) => handleInputChange('barNumber', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange('barNumber', e.target.value)
+                      }
                       className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
                     />
                   ) : (
-                    <p className="text-gray-700 font-medium">{lawyerData.barNumber}</p>
+                    <p className="text-gray-700 font-medium">
+                      {lawyerData.barNumber}
+                    </p>
                   )}
                 </div>
               </div>
@@ -334,11 +354,15 @@ export default function LawyerProfile() {
                     <input
                       type="number"
                       value={editData.experience}
-                      onChange={(e) => handleInputChange('experience', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange('experience', e.target.value)
+                      }
                       className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
                     />
                   ) : (
-                    <p className="text-gray-700 font-medium">{lawyerData.experience} years</p>
+                    <p className="text-gray-700 font-medium">
+                      {lawyerData.experience} years
+                    </p>
                   )}
                 </div>
               </div>
@@ -350,12 +374,16 @@ export default function LawyerProfile() {
                   {isEditing ? (
                     <textarea
                       value={editData.courtPractice}
-                      onChange={(e) => handleInputChange('courtPractice', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange('courtPractice', e.target.value)
+                      }
                       className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none resize-none"
                       rows={2}
                     />
                   ) : (
-                    <p className="text-gray-700 font-medium">{lawyerData.courtPractice}</p>
+                    <p className="text-gray-700 font-medium">
+                      {lawyerData.courtPractice}
+                    </p>
                   )}
                 </div>
               </div>
@@ -363,16 +391,22 @@ export default function LawyerProfile() {
               <div className="flex items-center space-x-3">
                 <span className="text-[#D6A767] font-bold">₹</span>
                 <div>
-                  <span className="text-sm text-gray-500">Consultation Fee:</span>
+                  <span className="text-sm text-gray-500">
+                    Consultation Fee:
+                  </span>
                   {isEditing ? (
                     <input
                       type="text"
                       value={editData.consultationFee}
-                      onChange={(e) => handleInputChange('consultationFee', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange('consultationFee', e.target.value)
+                      }
                       className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
                     />
                   ) : (
-                    <p className="text-gray-700 font-medium">{lawyerData.consultationFee}</p>
+                    <p className="text-gray-700 font-medium">
+                      {lawyerData.consultationFee}
+                    </p>
                   )}
                 </div>
               </div>
@@ -385,19 +419,23 @@ export default function LawyerProfile() {
               <GraduationCap className="h-5 w-5 text-[#D6A767]" />
               <span>Additional Information</span>
             </h2>
-            
+
             <div className="space-y-4">
               <div>
                 <span className="text-sm text-gray-500">Education:</span>
                 {isEditing ? (
                   <textarea
                     value={editData.education}
-                    onChange={(e) => handleInputChange('education', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange('education', e.target.value)
+                    }
                     className="block w-full mt-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none resize-none"
                     rows={2}
                   />
                 ) : (
-                  <p className="text-gray-700 font-medium">{lawyerData.education}</p>
+                  <p className="text-gray-700 font-medium">
+                    {lawyerData.education}
+                  </p>
                 )}
               </div>
 
@@ -407,11 +445,15 @@ export default function LawyerProfile() {
                   <input
                     type="text"
                     value={editData.languages}
-                    onChange={(e) => handleInputChange('languages', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange('languages', e.target.value)
+                    }
                     className="block w-full mt-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
                   />
                 ) : (
-                  <p className="text-gray-700 font-medium">{lawyerData.languages}</p>
+                  <p className="text-gray-700 font-medium">
+                    {lawyerData.languages}
+                  </p>
                 )}
               </div>
             </div>
@@ -436,18 +478,26 @@ export default function LawyerProfile() {
 
         {/* Statistics */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-black mb-6">Professional Statistics</h2>
+          <h2 className="text-xl font-bold text-black mb-6">
+            Professional Statistics
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center p-4 bg-[#E6D0B1] rounded-lg">
-              <div className="text-3xl font-bold text-[#D6A767] mb-2">{lawyerData.totalCases}</div>
+              <div className="text-3xl font-bold text-[#D6A767] mb-2">
+                {lawyerData.totalCases}
+              </div>
               <div className="text-sm text-gray-600">Total Cases</div>
             </div>
             <div className="text-center p-4 bg-[#E6D0B1] rounded-lg">
-              <div className="text-3xl font-bold text-[#D6A767] mb-2">{lawyerData.successRate}%</div>
+              <div className="text-3xl font-bold text-[#D6A767] mb-2">
+                {lawyerData.successRate}%
+              </div>
               <div className="text-sm text-gray-600">Success Rate</div>
             </div>
             <div className="text-center p-4 bg-[#E6D0B1] rounded-lg">
-              <div className="text-3xl font-bold text-[#D6A767] mb-2">{lawyerData.rating}</div>
+              <div className="text-3xl font-bold text-[#D6A767] mb-2">
+                {lawyerData.rating}
+              </div>
               <div className="text-sm text-gray-600">Average Rating</div>
             </div>
           </div>
