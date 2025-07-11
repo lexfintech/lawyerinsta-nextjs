@@ -6,9 +6,12 @@ export default function About() {
       {/* Hero Section */}
       <section className="hero-gradient py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-bold text-black mb-6">About LawyerInsta</h1>
+          <h1 className="text-5xl font-bold text-black mb-6">
+            About LawyerInsta
+          </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Bridging the gap between justice seekers and legal professionals across India
+            Bridging the gap between justice seekers and legal professionals
+            across India
           </p>
         </div>
       </section>
@@ -20,21 +23,27 @@ export default function About() {
             <div className="space-y-6">
               <h2 className="text-4xl font-bold text-black">Our Mission</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
-                LawyerInsta was created with one simple goal: make qualified legal help accessible, 
-                transparent, and instantaneous for every citizen of India. With more than 20 lakh 
-                verified lawyer profiles, cutting-edge search technology, and a user-first approach, 
-                we bridge the gap between people seeking justice and the legal professionals who can deliver it.
+                LawyerInsta was created with one simple goal: make qualified
+                legal help accessible, transparent, and instantaneous for every
+                citizen of India. With more than 20 lakh verified lawyer
+                profiles, cutting-edge search technology, and a user-first
+                approach, we bridge the gap between people seeking justice and
+                the legal professionals who can deliver it.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                We believe that access to quality legal representation should not be a privilege 
-                but a fundamental right available to all Indians, regardless of their location or background.
+                We believe that access to quality legal representation should
+                not be a privilege but a fundamental right available to all
+                Indians, regardless of their location or background.
               </p>
             </div>
             <div className="bg-[#D6A767] bg-opacity-10 p-8 rounded-2xl">
               <Scale className="h-16 w-16 text-[#D6A767] mb-6" />
-              <h3 className="text-2xl font-bold text-black mb-4">Justice for All</h3>
+              <h3 className="text-2xl font-bold text-black mb-4">
+                Justice for All
+              </h3>
               <p className="text-gray-700">
-                Making legal services accessible, transparent, and affordable for every Indian citizen.
+                Making legal services accessible, transparent, and affordable
+                for every Indian citizen.
               </p>
             </div>
           </div>
@@ -46,15 +55,20 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-black mb-4">Our Values</h2>
-            <p className="text-xl text-gray-600">The principles that guide everything we do</p>
+            <p className="text-xl text-gray-600">
+              The principles that guide everything we do
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-xl shadow-lg text-center">
               <Target className="h-12 w-12 text-[#D6A767] mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-black mb-4">Transparency</h3>
+              <h3 className="text-xl font-bold text-black mb-4">
+                Transparency
+              </h3>
               <p className="text-gray-600">
-                Clear pricing, honest reviews, and transparent lawyer profiles to help you make informed decisions.
+                Clear pricing, honest reviews, and transparent lawyer profiles
+                to help you make informed decisions.
               </p>
             </div>
 
@@ -62,15 +76,19 @@ export default function About() {
               <Shield className="h-12 w-12 text-[#D6A767] mx-auto mb-4" />
               <h3 className="text-xl font-bold text-black mb-4">Trust</h3>
               <p className="text-gray-600">
-                Every lawyer on our platform is verified and vetted to ensure you get quality legal representation.
+                Every lawyer on our platform is verified and vetted to ensure
+                you get quality legal representation.
               </p>
             </div>
 
             <div className="bg-white p-8 rounded-xl shadow-lg text-center">
               <Users className="h-12 w-12 text-[#D6A767] mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-black mb-4">Accessibility</h3>
+              <h3 className="text-xl font-bold text-black mb-4">
+                Accessibility
+              </h3>
               <p className="text-gray-600">
-                Making legal help available to everyone, everywhere in India, at any time.
+                Making legal help available to everyone, everywhere in India, at
+                any time.
               </p>
             </div>
 
@@ -78,7 +96,8 @@ export default function About() {
               <Award className="h-12 w-12 text-[#D6A767] mx-auto mb-4" />
               <h3 className="text-xl font-bold text-black mb-4">Excellence</h3>
               <p className="text-gray-600">
-                Connecting you with top-rated lawyers who deliver exceptional legal services.
+                Connecting you with top-rated lawyers who deliver exceptional
+                legal services.
               </p>
             </div>
 
@@ -86,7 +105,8 @@ export default function About() {
               <Heart className="h-12 w-12 text-[#D6A767] mx-auto mb-4" />
               <h3 className="text-xl font-bold text-black mb-4">Empathy</h3>
               <p className="text-gray-600">
-                Understanding that legal issues are personal and providing compassionate support.
+                Understanding that legal issues are personal and providing
+                compassionate support.
               </p>
             </div>
 
@@ -94,7 +114,8 @@ export default function About() {
               <Scale className="h-12 w-12 text-[#D6A767] mx-auto mb-4" />
               <h3 className="text-xl font-bold text-black mb-4">Justice</h3>
               <p className="text-gray-600">
-                Committed to ensuring fair access to legal representation for all Indians.
+                Committed to ensuring fair access to legal representation for
+                all Indians.
               </p>
             </div>
           </div>
@@ -106,7 +127,9 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">Our Impact</h2>
-            <p className="text-xl text-white text-opacity-90">Numbers that reflect our commitment to justice</p>
+            <p className="text-xl text-white text-opacity-90">
+              Numbers that reflect our commitment to justice
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
