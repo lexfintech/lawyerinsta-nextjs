@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDb } from '../../lib/connectDb';
-import { Lawyer } from '../../models/lawer';
+import { Lawyer } from '../../models/lawyer';
 import bcrypt from 'bcrypt'
 
 const SALT_ROUNDS = 10;
@@ -17,7 +17,8 @@ export async function POST(req: NextRequest) {
       last_Name,
       email,
       password_hash,
-      mobile_Number
+      mobile_Number,
+      city
     } = body;
 
     // Validate required fields
@@ -27,7 +28,8 @@ export async function POST(req: NextRequest) {
       !last_Name ||
       !email ||
       !password_hash ||
-      !mobile_Number
+      !mobile_Number ||
+      !city
     ) {
       return NextResponse.json(
         { message: 'Missing required fields' },
