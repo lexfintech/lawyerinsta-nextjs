@@ -7,6 +7,7 @@ export interface ILawyer extends Document {
   email: string;
   password_hash: string;
   mobile_Number: number;
+  city: string[],
   WhatsApp_Number: number;
   building_name: string;
   landmark: string;
@@ -28,6 +29,7 @@ export interface ILawyer extends Document {
   city_id: number;
   is_premium: boolean;
   premium_expires_at: Date;
+  area_of_expertise: String[];
 }
 
 const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
@@ -39,6 +41,8 @@ const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
     email: { type: String, unique: true},
     password_hash: { type: String, required: true },
     mobile_Number: { type: Number, required: true, unique: true },
+    city: { type: [String], required: true },
+    area_of_expertise: { type: [String], default: [] },
     WhatsApp_Number: { type: Number, default: null},
     building_name: { type: String, default: null },
     landmark: { type: String, default: null },

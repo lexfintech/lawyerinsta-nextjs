@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDb } from '../../lib/connectDb';
-import { Lawyer } from '../../models/lawer';
+import { Lawyer } from '../../models/lawyer';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
