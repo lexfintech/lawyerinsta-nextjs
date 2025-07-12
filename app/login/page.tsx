@@ -2,34 +2,59 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff, Scale } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
+import { toast, Toaster } from 'sonner';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [enrollmentId, setEnrollmentId] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [success, setSuccess] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    setSuccess('');
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      if (enrollmentId && password) {
-        setSuccess('Login successful!');
-        setIsSubmitted(true);
-      } else {
-        setError('Please fill in all fields.');
+    if (!enrollmentId.trim() || !password.trim()) {
+      toast.error('All fields are required');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enrollment_id: enrollmentId.trim(),
+          password: password.trim(),
+        }),
+        redirect: 'follow', // follow redirect to /profile
+      });
+
+      console.log(response)
+
+      // If server redirected to /profile, this won't return JSON
+      if (response.ok) {
+        toast.success('Login successful! Redirecting...');
+        router.push('/profile');
+        return;
       }
-    }, 2000);
+
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.message || 'Invalid credentials');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -44,7 +69,7 @@ export default function Login() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="email"
+                htmlFor="enrollment-id"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
                 Enrollment ID
@@ -72,9 +97,9 @@ export default function Login() {
                 <input
                   id="password"
                   name="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  type={showPassword ? 'text' : 'password'}
                   required
                   className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
                   placeholder="Enter your password"
@@ -94,22 +119,16 @@ export default function Login() {
             </div>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center">
+              <label className="flex items-center text-sm text-gray-700">
                 <input
-                  id="remember-me"
-                  name="remember-me"
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-[#D6A767] focus:ring-[#D6A767] border-gray-300 rounded"
+                  className="h-4 w-4 text-[#D6A767] border-gray-300 rounded focus:ring-[#D6A767]"
                 />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-700"
-                >
-                  Remember me
-                </label>
-              </div>
+                <span className="ml-2">Remember me</span>
+              </label>
+
               <Link
                 href="/forgot-password"
                 className="text-sm text-[#D6A767] hover:text-[#C19653]"
@@ -140,6 +159,15 @@ export default function Login() {
           </div>
         </div>
       </div>
+
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          className:
+            'bg-white text-gray-900 border border-gray-300 rounded-lg shadow-lg',
+          duration: 3000,
+        }}
+      />
     </div>
   );
 }

@@ -59,7 +59,7 @@ export default function LawyerRegistrationSection() {
               </div>
             </div>
 
-            <Link href="/register-lawyer" className="btn-primary inline-block">
+            <Link href="/signup" className="btn-primary inline-block">
               Register Now
             </Link>
           </div>
