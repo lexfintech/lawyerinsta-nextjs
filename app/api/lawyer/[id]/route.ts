@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDb } from '@/lib/connectDb';
 import { Lawyer } from '@/models/lawyer';
+import jwt from 'jsonwebtoken';
 
 export async function GET(
   request: NextRequest,
@@ -25,6 +26,8 @@ export async function GET(
   }
 }
 
+
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -33,10 +36,26 @@ export async function PUT(
 
   const { id } = params;
 
+  // Check for Authorization header
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return NextResponse.json(
+      { message: 'Unauthorized: No token provided' },
+      { status: 401 }
+    );
+  }
+
+  // Extract token
+  const token = authHeader.split(' ')[1];
+
   try {
+    //  Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+
+    //  Proceed with update if token is valid
     const body = await request.json();
 
-    // Exclude restricted fields from being updated
+    // Exclude restricted fields
     const { enrollment_id, password_hash, ...updatableFields } = body;
 
     const updatedLawyer = await Lawyer.findOneAndUpdate(
@@ -55,7 +74,16 @@ export async function PUT(
     );
 
   } catch (error: any) {
+    //  If token invalid/expired
+    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+      return NextResponse.json(
+        { message: 'Invalid or expired token' },
+        { status: 401 }
+      );
+    }
+
     console.error('Error updating lawyer:', error);
     return NextResponse.json({ message: 'Server Error', error: error.message }, { status: 500 });
   }
 }
+
