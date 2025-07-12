@@ -33,12 +33,12 @@ export default function Footer() {
                 Find A Lawyer
               </Link>
               <Link
-                href="/register-lawyer"
+                href="/signup"
                 className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
               >
                 Register As A Lawyer
               </Link>
-              <Link
+              {/* <Link
                 href="/careers"
                 className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
               >
@@ -49,7 +49,7 @@ export default function Footer() {
                 className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
               >
                 Terms of Service
-              </Link>
+              </Link> */}
               <Link
                 href="/about"
                 className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
@@ -62,12 +62,12 @@ export default function Footer() {
               >
                 Contact Us
               </Link>
-              <Link
+              {/* <Link
                 href="/privacy"
                 className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
               >
                 Privacy Policy
-              </Link>
+              </Link> */}
             </div>
           </div>
 
