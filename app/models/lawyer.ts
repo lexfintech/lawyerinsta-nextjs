@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
 export interface ILawyer extends Document {
   enrollment_id: string;
@@ -7,7 +7,7 @@ export interface ILawyer extends Document {
   email: string;
   password_hash: string;
   mobile_Number: number;
-  city: string[],
+  city: string[];
   WhatsApp_Number: number;
   building_name: string;
   landmark: string;
@@ -34,16 +34,15 @@ export interface ILawyer extends Document {
 
 const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
   {
-    
     enrollment_id: { type: String, required: true, unique: true },
     first_Name: { type: String, required: true },
     last_Name: { type: String, required: true },
-    email: { type: String, unique: true},
+    email: { type: String, unique: true },
     password_hash: { type: String, required: true },
     mobile_Number: { type: Number, required: true, unique: true },
     city: { type: [String], required: true },
     area_of_expertise: { type: [String], default: [] },
-    WhatsApp_Number: { type: Number, default: null},
+    WhatsApp_Number: { type: Number, default: null },
     building_name: { type: String, default: null },
     landmark: { type: String, default: null },
     post_office: { type: String, default: null },
@@ -65,8 +64,8 @@ const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
     is_premium: { type: Boolean, default: false },
     premium_expires_at: { type: Date, default: null },
   },
-  { timestamps: true } // adds createdAt and updatedAt automatically
+  { timestamps: true }, // adds createdAt and updatedAt automatically
 );
 
 export const Lawyer: Model<ILawyer> =
-  mongoose.models.Lawyer || mongoose.model<ILawyer>("Lawyer", LawyerSchema);
+  mongoose.models.Lawyer || mongoose.model<ILawyer>('Lawyer', LawyerSchema);

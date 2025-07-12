@@ -21,7 +21,7 @@ export default function HeroSection() {
               <Link href="/find-lawyer" className="btn-primary text-center">
                 Find a Lawyer
               </Link>
-              <Link href="/register-lawyer" className="btn-outline text-center">
+              <Link href="/signup" className="btn-outline text-center">
                 Register as Lawyer
               </Link>
             </div>

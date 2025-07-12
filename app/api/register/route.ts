@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDb } from '../../lib/connectDb';
 import { Lawyer } from '../../models/lawyer';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
 const SALT_ROUNDS = 10;
 
@@ -18,22 +18,22 @@ export async function POST(req: NextRequest) {
       email,
       password_hash,
       mobile_Number,
-      city
+      city,
     } = body;
 
     // Validate required fields
     if (
-      !enrollment_id ||
-      !first_Name ||
-      !last_Name ||
-      !email ||
-      !password_hash ||
-      !mobile_Number ||
-      !city
-    ) {
+  !enrollment_id ||
+  !first_Name ||
+  !last_Name ||
+  !email ||
+  !password_hash ||
+  !mobile_Number ||
+  !Array.isArray(city) || city.length === 0
+) {
       return NextResponse.json(
         { message: 'Missing required fields' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -48,13 +48,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { message: 'Lawyer registered successfully!', data: newLawyer },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error('Error registering lawyer:', error);
     return NextResponse.json(
       { message: 'Failed to register lawyer', error },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
