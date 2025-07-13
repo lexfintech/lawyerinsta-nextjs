@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   User,
   Mail,
@@ -72,6 +72,21 @@ export default function LawyerProfile() {
       [field]: value,
     }));
   };
+
+  useEffect(() => {
+    const response = fetch('/api/lawyer');
+    response
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.data) {
+          console.log('Fetched lawyer data:', data.data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching lawyer data:', error);
+      }
+    );
+  },[])
 
   const handleImageUpload = (type: 'profile' | 'cover') => {
     // In a real app, this would handle file upload
