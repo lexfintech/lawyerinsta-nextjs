@@ -49,7 +49,10 @@ export async function POST(req: NextRequest) {
       { expiresIn: '1d' },
     );
 
-    const response = NextResponse.redirect(new URL('/profile', req.url));
+    const response = NextResponse.json(
+      { message: 'Login successful'},
+      { status: 200 },
+    );
 
     // Set the JWT in a secure HTTP-only cookie
     response.headers.set(
