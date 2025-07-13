@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   await connectDb();
 
-  const token = req.cookies.get('token')?.value;
+  const token = req.cookies.get('auth_token')?.value;
   const decoded = token ? verifyToken(token) : null;
 
   if (!decoded || typeof decoded === 'string' || !('enrollment_id' in decoded)) {

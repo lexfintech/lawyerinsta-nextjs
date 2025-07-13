@@ -18,38 +18,37 @@ import {
   GraduationCap,
   Scale,
 } from 'lucide-react';
+import { set } from 'mongoose';
 
 // Mock lawyer data
-const initialLawyerData = {
-  id: 1,
-  firstName: 'Rajesh',
-  lastName: 'Kumar',
-  email: 'rajesh.kumar@example.com',
-  phone: '+91 98765 43210',
-  barNumber: 'BAR123456',
-  specialization: 'Criminal Law',
-  experience: 15,
-  city: 'Delhi',
-  address: '123 Legal Street, Connaught Place, New Delhi - 110001',
-  bio: 'Experienced criminal lawyer with 15 years of practice. Specialized in handling complex criminal cases with a success rate of 85%. Committed to providing the best legal representation to my clients.',
-  education: 'LLB from Delhi University, LLM from Jamia Millia Islamia',
-  languages: 'Hindi, English, Punjabi',
-  courtPractice: 'Delhi High Court, Supreme Court of India',
-  consultationFee: '₹2,000',
-  rating: 4.8,
-  totalCases: 250,
-  successRate: 85,
-  isPremium: true,
-  profileImage:
-    'https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=400',
-  coverImage:
-    'https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg?auto=compress&cs=tinysrgb&w=1200',
+
+
+type LawyerData = {
+  first_Name?: string;
+  last_Name?: string;
+  email?: string;
+  mobile_Number?: string;
+  city?: [];
+  address?: string;
+  profile_picture_url?: string;
+  cover_picture_url?: string;
+  area_of_expertise?: string;
+  is_premium?: boolean;
+  rating?: number;
+  totalCases?: number;
+  successRate?: number;
+  enrollment_id?: string;
+  experience?: number;
+  courtPractice?: string;
+  education?: string;
+  languages?: string;
+  bio?: string;
 };
 
 export default function LawyerProfile() {
-  const [lawyerData, setLawyerData] = useState(initialLawyerData);
+  const [lawyerData, setLawyerData] = useState<LawyerData>({});
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState(initialLawyerData);
+  const [editData, setEditData] = useState<LawyerData>({});
 
   const handleEdit = () => {
     setEditData(lawyerData);
@@ -58,6 +57,23 @@ export default function LawyerProfile() {
 
   const handleSave = () => {
     setLawyerData(editData);
+    const response = fetch('/api/lawyer', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(editData),
+    });
+    response
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.data) {
+          setLawyerData(data.data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating lawyer data:', error);
+      });
     setIsEditing(false);
   };
 
@@ -79,7 +95,7 @@ export default function LawyerProfile() {
       .then((res) => res.json())
       .then((data) => {
         if (data.data) {
-          console.log('Fetched lawyer data:', data.data);
+          setLawyerData(data.data);
         }
       })
       .catch((error) => {
@@ -116,7 +132,7 @@ export default function LawyerProfile() {
       {/* Cover Photo Section */}
       <div className="relative h-64 bg-gradient-to-r from-[#3C222F] to-[#D6A767]">
         <img
-          src={isEditing ? editData.coverImage : lawyerData.coverImage}
+          src={isEditing ? editData?.cover_picture_url : lawyerData?.cover_picture_url}
           alt="Cover"
           className="w-full h-full object-cover"
         />
@@ -139,7 +155,7 @@ export default function LawyerProfile() {
               <div className="relative">
                 <img
                   src={
-                    isEditing ? editData.profileImage : lawyerData.profileImage
+                    isEditing ? editData.profile_picture_url : lawyerData.profile_picture_url
                   }
                   alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
@@ -161,7 +177,7 @@ export default function LawyerProfile() {
                     <div className="flex space-x-2">
                       <input
                         type="text"
-                        value={editData.firstName}
+                        value={editData?.first_Name}
                         onChange={(e) =>
                           handleInputChange('firstName', e.target.value)
                         }
@@ -170,9 +186,9 @@ export default function LawyerProfile() {
                       />
                       <input
                         type="text"
-                        value={editData.lastName}
+                        value={editData.last_Name}
                         onChange={(e) =>
-                          handleInputChange('lastName', e.target.value)
+                          handleInputChange('last_name', e.target.value)
                         }
                         className="text-2xl font-bold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
                         placeholder="Last Name"
@@ -180,10 +196,10 @@ export default function LawyerProfile() {
                     </div>
                   ) : (
                     <h1 className="text-3xl font-bold text-black">
-                      {lawyerData.firstName} {lawyerData.lastName}
+                      {lawyerData.first_Name} {lawyerData.last_Name}
                     </h1>
                   )}
-                  {lawyerData.isPremium && (
+                  {lawyerData.is_premium && (
                     <Crown className="h-6 w-6 text-[#D6A767]" />
                   )}
                 </div>
@@ -191,7 +207,7 @@ export default function LawyerProfile() {
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="flex items-center space-x-1">
                     <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                    <span className="font-semibold">{lawyerData.rating}</span>
+                    <span className="font-semibold">{lawyerData?.rating}</span>
                   </div>
                   <div className="text-gray-600">
                     {lawyerData.totalCases} cases completed
@@ -203,9 +219,9 @@ export default function LawyerProfile() {
 
                 {isEditing ? (
                   <select
-                    value={editData.specialization}
+                    value={editData.area_of_expertise}
                     onChange={(e) =>
-                      handleInputChange('specialization', e.target.value)
+                      handleInputChange('area_of_expertise', e.target.value)
                     }
                     className="text-lg text-[#D6A767] font-semibold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
                   >
@@ -224,7 +240,7 @@ export default function LawyerProfile() {
                   </select>
                 ) : (
                   <p className="text-lg text-[#D6A767] font-semibold">
-                    {lawyerData.specialization}
+                    {lawyerData.area_of_expertise}
                   </p>
                 )}
               </div>
@@ -291,12 +307,12 @@ export default function LawyerProfile() {
                 {isEditing ? (
                   <input
                     type="tel"
-                    value={editData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    value={editData.mobile_Number}
+                    onChange={(e) => handleInputChange('mobile_Number', e.target.value)}
                     className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
                   />
                 ) : (
-                  <span className="text-gray-700">{lawyerData.phone}</span>
+                  <span className="text-gray-700">{lawyerData.mobile_Number}</span>
                 )}
               </div>
 
@@ -310,7 +326,7 @@ export default function LawyerProfile() {
                     className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
                   />
                 ) : (
-                  <span className="text-gray-700">{lawyerData.city}</span>
+                  <span className="text-gray-700">{lawyerData.city?.join(', ')}</span>
                 )}
               </div>
 
@@ -343,19 +359,19 @@ export default function LawyerProfile() {
               <div className="flex items-center space-x-3">
                 <Scale className="h-5 w-5 text-[#D6A767]" />
                 <div>
-                  <span className="text-sm text-gray-500">Bar Number:</span>
+                  <span className="text-sm text-gray-500">Enrollment ID:</span>
                   {isEditing ? (
                     <input
                       type="text"
-                      value={editData.barNumber}
+                      value={editData.enrollment_id}
                       onChange={(e) =>
-                        handleInputChange('barNumber', e.target.value)
+                        handleInputChange('enrollment_id', e.target.value)
                       }
                       className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
                     />
                   ) : (
                     <p className="text-gray-700 font-medium">
-                      {lawyerData.barNumber}
+                      {lawyerData.enrollment_id}
                     </p>
                   )}
                 </div>
@@ -403,7 +419,7 @@ export default function LawyerProfile() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3">
+              {/* <div className="flex items-center space-x-3">
                 <span className="text-[#D6A767] font-bold">₹</span>
                 <div>
                   <span className="text-sm text-gray-500">
@@ -424,7 +440,7 @@ export default function LawyerProfile() {
                     </p>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
