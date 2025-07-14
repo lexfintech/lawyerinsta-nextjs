@@ -5,315 +5,28 @@ import { Search, MapPin, Star, Crown, Phone, Mail, Award } from 'lucide-react';
 
 // Type definitions
 type Lawyer = {
-  name: string;
+  first_Name: string;
+  last_Name: string;
   experience: number;
-  premium: boolean;
-  rating: number;
-  cases: number;
-  phone: string;
+  is_premium: boolean;
+  cases_completed: number;
+  mobile_Number: string;
   email: string;
 };
 
 type Specialization =
-  | 'criminal'
-  | 'corporate'
-  | 'art'
-  | 'animal'
-  | 'banking'
-  | 'business'
-  | 'cyber';
+  | 'Criminal Law'
+  | 'Corporate Law'
+  | 'Art Law'
+  | 'Animal Law'
+  | 'Banking & Finance Law'
+  | 'Business Law'
+  | 'Cyber Law';
 
 type LawyerData = {
   [K in Specialization]: Lawyer[];
 };
 
-// Dummy lawyer data
-const lawyerData: LawyerData = {
-  criminal: [
-    {
-      name: 'Adv. Rajesh Kumar',
-      experience: 15,
-      premium: true,
-      rating: 4.9,
-      cases: 250,
-      phone: '+91 98765 43210',
-      email: 'rajesh@example.com',
-    },
-    {
-      name: 'Adv. Priya Sharma',
-      experience: 12,
-      premium: true,
-      rating: 4.8,
-      cases: 180,
-      phone: '+91 98765 43211',
-      email: 'priya@example.com',
-    },
-    {
-      name: 'Adv. Vikram Singh',
-      experience: 8,
-      premium: false,
-      rating: 4.6,
-      cases: 120,
-      phone: '+91 98765 43212',
-      email: 'vikram@example.com',
-    },
-    {
-      name: 'Adv. Meera Joshi',
-      experience: 10,
-      premium: false,
-      rating: 4.7,
-      cases: 95,
-      phone: '+91 98765 43213',
-      email: 'meera@example.com',
-    },
-    {
-      name: 'Adv. Arjun Patel',
-      experience: 20,
-      premium: true,
-      rating: 4.9,
-      cases: 300,
-      phone: '+91 98765 43214',
-      email: 'arjun@example.com',
-    },
-  ],
-  corporate: [
-    {
-      name: 'Adv. Anita Gupta',
-      experience: 18,
-      premium: true,
-      rating: 4.9,
-      cases: 200,
-      phone: '+91 98765 43215',
-      email: 'anita@example.com',
-    },
-    {
-      name: 'Adv. Rohit Mehta',
-      experience: 14,
-      premium: true,
-      rating: 4.8,
-      cases: 160,
-      phone: '+91 98765 43216',
-      email: 'rohit@example.com',
-    },
-    {
-      name: 'Adv. Kavya Reddy',
-      experience: 9,
-      premium: false,
-      rating: 4.5,
-      cases: 85,
-      phone: '+91 98765 43217',
-      email: 'kavya@example.com',
-    },
-    {
-      name: 'Adv. Suresh Nair',
-      experience: 22,
-      premium: true,
-      rating: 5.0,
-      cases: 350,
-      phone: '+91 98765 43218',
-      email: 'suresh@example.com',
-    },
-    {
-      name: 'Adv. Deepika Agarwal',
-      experience: 7,
-      premium: false,
-      rating: 4.4,
-      cases: 70,
-      phone: '+91 98765 43219',
-      email: 'deepika@example.com',
-    },
-  ],
-  art: [
-    {
-      name: 'Adv. Ravi Chopra',
-      experience: 12,
-      premium: true,
-      rating: 4.7,
-      cases: 90,
-      phone: '+91 98765 43220',
-      email: 'ravi@example.com',
-    },
-    {
-      name: 'Adv. Sonia Kapoor',
-      experience: 8,
-      premium: false,
-      rating: 4.5,
-      cases: 65,
-      phone: '+91 98765 43221',
-      email: 'sonia@example.com',
-    },
-    {
-      name: 'Adv. Amit Verma',
-      experience: 15,
-      premium: true,
-      rating: 4.8,
-      cases: 110,
-      phone: '+91 98765 43222',
-      email: 'amit@example.com',
-    },
-    {
-      name: 'Adv. Neha Bansal',
-      experience: 6,
-      premium: false,
-      rating: 4.3,
-      cases: 45,
-      phone: '+91 98765 43223',
-      email: 'neha@example.com',
-    },
-  ],
-  animal: [
-    {
-      name: 'Adv. Kiran Desai',
-      experience: 10,
-      premium: true,
-      rating: 4.6,
-      cases: 75,
-      phone: '+91 98765 43224',
-      email: 'kiran@example.com',
-    },
-    {
-      name: 'Adv. Manish Jain',
-      experience: 7,
-      premium: false,
-      rating: 4.4,
-      cases: 50,
-      phone: '+91 98765 43225',
-      email: 'manish@example.com',
-    },
-    {
-      name: 'Adv. Pooja Malhotra',
-      experience: 13,
-      premium: true,
-      rating: 4.7,
-      cases: 95,
-      phone: '+91 98765 43226',
-      email: 'pooja@example.com',
-    },
-    {
-      name: 'Adv. Rahul Saxena',
-      experience: 5,
-      premium: false,
-      rating: 4.2,
-      cases: 35,
-      phone: '+91 98765 43227',
-      email: 'rahul@example.com',
-    },
-  ],
-  banking: [
-    {
-      name: 'Adv. Sunita Rao',
-      experience: 16,
-      premium: true,
-      rating: 4.8,
-      cases: 180,
-      phone: '+91 98765 43228',
-      email: 'sunita@example.com',
-    },
-    {
-      name: 'Adv. Ashok Kumar',
-      experience: 19,
-      premium: true,
-      rating: 4.9,
-      cases: 220,
-      phone: '+91 98765 43229',
-      email: 'ashok@example.com',
-    },
-    {
-      name: 'Adv. Ritika Sharma',
-      experience: 8,
-      premium: false,
-      rating: 4.5,
-      cases: 80,
-      phone: '+91 98765 43230',
-      email: 'ritika@example.com',
-    },
-    {
-      name: 'Adv. Gaurav Mishra',
-      experience: 11,
-      premium: false,
-      rating: 4.6,
-      cases: 100,
-      phone: '+91 98765 43231',
-      email: 'gaurav@example.com',
-    },
-  ],
-  business: [
-    {
-      name: 'Adv. Nisha Agarwal',
-      experience: 14,
-      premium: true,
-      rating: 4.8,
-      cases: 150,
-      phone: '+91 98765 43232',
-      email: 'nisha@example.com',
-    },
-    {
-      name: 'Adv. Sanjay Gupta',
-      experience: 17,
-      premium: true,
-      rating: 4.9,
-      cases: 190,
-      phone: '+91 98765 43233',
-      email: 'sanjay@example.com',
-    },
-    {
-      name: 'Adv. Preeti Singh',
-      experience: 9,
-      premium: false,
-      rating: 4.4,
-      cases: 85,
-      phone: '+91 98765 43234',
-      email: 'preeti@example.com',
-    },
-    {
-      name: 'Adv. Harish Patel',
-      experience: 12,
-      premium: false,
-      rating: 4.6,
-      cases: 110,
-      phone: '+91 98765 43235',
-      email: 'harish@example.com',
-    },
-  ],
-  cyber: [
-    {
-      name: 'Adv. Techno Sharma',
-      experience: 8,
-      premium: true,
-      rating: 4.7,
-      cases: 95,
-      phone: '+91 98765 43236',
-      email: 'techno@example.com',
-    },
-    {
-      name: 'Adv. Digital Kumar',
-      experience: 6,
-      premium: false,
-      rating: 4.5,
-      cases: 60,
-      phone: '+91 98765 43237',
-      email: 'digital@example.com',
-    },
-    {
-      name: 'Adv. Cyber Gupta',
-      experience: 10,
-      premium: true,
-      rating: 4.8,
-      cases: 120,
-      phone: '+91 98765 43238',
-      email: 'cyber@example.com',
-    },
-    {
-      name: 'Adv. Net Patel',
-      experience: 5,
-      premium: false,
-      rating: 4.3,
-      cases: 40,
-      phone: '+91 98765 43239',
-      email: 'net@example.com',
-    },
-  ],
-};
 
 const cities = [
   'Delhi',
@@ -331,13 +44,13 @@ const cities = [
 ];
 
 const specializations: { value: Specialization; label: string }[] = [
-  { value: 'criminal', label: 'Criminal Law' },
-  { value: 'corporate', label: 'Corporate Law' },
-  { value: 'art', label: 'Art Law' },
-  { value: 'animal', label: 'Animal Law' },
-  { value: 'banking', label: 'Banking & Finance Law' },
-  { value: 'business', label: 'Business Law' },
-  { value: 'cyber', label: 'Cyber Law' },
+  { value: 'Criminal Law', label: 'Criminal Law' },
+  { value: 'Corporate Law', label: 'Corporate Law' },
+  { value: 'Art Law', label: 'Art Law' },
+  { value: 'Animal Law', label: 'Animal Law' },
+  { value: 'Banking & Finance Law', label: 'Banking & Finance Law' },
+  { value: 'Business Law', label: 'Business Law' },
+  { value: 'Cyber Law', label: 'Cyber Law' },
 ];
 
 export default function FindLawyer() {
@@ -345,13 +58,46 @@ export default function FindLawyer() {
   const [selectedSpecialization, setSelectedSpecialization] = useState('');
   const [searchResults, setSearchResults] = useState<Lawyer[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [lawyerData, setLawyerData] = useState<LawyerData>({
+    'Criminal Law': [],
+    'Corporate Law': [],
+    'Art Law': [],
+    'Animal Law': [],
+    'Banking & Finance Law': [],
+    'Business Law': [],
+    'Cyber Law': [],
+  });
 
   const handleSearch = () => {
     if (
       selectedSpecialization &&
       lawyerData[selectedSpecialization as Specialization]
     ) {
-      setSearchResults(lawyerData[selectedSpecialization as Specialization]);
+      const response  = fetch('/api/find-lawyer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          city: selectedCity,
+          area_of_expertise: selectedSpecialization,
+        }),
+      });
+      response
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.data) {
+            console.log(data.data);
+            setLawyerData((prev) => ({
+              ...prev,
+              [selectedSpecialization]: data.data,
+            }));
+            setSearchResults(data.data);
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching lawyer data:', error);
+        });
       setHasSearched(true);
     } else {
       setSearchResults([]);
@@ -445,9 +191,9 @@ export default function FindLawyer() {
                     <div>
                       <div className="flex items-center space-x-2 mb-2">
                         <h3 className="text-xl font-semibold text-black">
-                          {lawyer.name}
+                          {lawyer.first_Name} {lawyer.last_Name}
                         </h3>
-                        {lawyer.premium && (
+                        {lawyer.is_premium && (
                           <Crown className="h-5 w-5 text-[#D6A767]" />
                         )}
                       </div>
@@ -456,14 +202,8 @@ export default function FindLawyer() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="flex items-center space-x-1 mb-1">
-                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                        <span className="text-sm font-medium">
-                          {lawyer.rating}
-                        </span>
-                      </div>
                       <p className="text-xs text-gray-500">
-                        {lawyer.cases} cases
+                        {lawyer.cases_completed} cases
                       </p>
                     </div>
                   </div>
@@ -486,7 +226,7 @@ export default function FindLawyer() {
 
                   <div className="flex space-x-2">
                     <a
-                      href={`tel:${lawyer.phone}`}
+                      href={`tel:${lawyer.mobile_Number}`}
                       className="flex-1 bg-[#D6A767] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#C19653] transition-colors flex items-center justify-center space-x-1"
                     >
                       <Phone className="h-4 w-4" />

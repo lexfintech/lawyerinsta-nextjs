@@ -17,10 +17,34 @@ import {
   Briefcase,
   GraduationCap,
   Scale,
+  ChevronDown,
 } from 'lucide-react';
 import { set } from 'mongoose';
 
-// Mock lawyer data
+
+// Predefined base lists for dropdowns
+const availableLanguages = [
+  'English', 'Spanish', 'Hindi', 'Telugu', 'French', 'German',
+  'Mandarin Chinese', 'Arabic', 'Bengali', 'Russian', 'Portuguese', 'Japanese',
+];
+
+const availableCities = [
+    'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
+    'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow',
+];
+
+const expertiseOptions = [
+    { value: 'Criminal Law', label: 'Criminal Law' },
+    { value: 'Corporate Law', label: 'Corporate Law' },
+    { value: 'Art Law', label: 'Art Law' },
+    { value: 'Animal Law', label: 'Animal Law' },
+    { value: 'Banking & Finance Law', label: 'Banking & Finance Law' },
+    { value: 'Business Law', label: 'Business Law' },
+    { value: 'Cyber Law', label: 'Cyber Law' },
+    { value: 'Family Law', label: 'Family Law' },
+    { value: 'Property Law', label: 'Property Law' },
+    { value: 'Labor Law', label: 'Labor Law' },
+];
 
 
 type LawyerData = {
@@ -28,41 +52,79 @@ type LawyerData = {
   last_Name?: string;
   email?: string;
   mobile_Number?: string;
-  city?: [];
+  city?: string[];
   address?: string;
   profile_picture_url?: string;
   cover_picture_url?: string;
-  area_of_expertise?: string;
+  area_of_expertise?: string[];
   is_premium?: boolean;
   rating?: number;
   totalCases?: number;
   successRate?: number;
   enrollment_id?: string;
+  practice_start_year?: number;
   experience?: number;
   courtPractice?: string;
   education?: string;
-  languages?: string;
+  languages?: string | string[];
   bio?: string;
+  cases_completed?: number;
 };
 
 export default function LawyerProfile() {
   const [lawyerData, setLawyerData] = useState<LawyerData>({});
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<LawyerData>({});
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+  const [isExpertiseDropdownOpen, setIsExpertiseDropdownOpen] = useState(false);
+
+  const calculateExperience = (startYear: number | undefined): number => {
+    if (!startYear || isNaN(startYear)) return 0;
+    const currentYear = new Date().getFullYear();
+    const start = Number(startYear);
+    if (start > currentYear) return 0;
+    return currentYear - start;
+  };
 
   const handleEdit = () => {
-    setEditData(lawyerData);
+    // Ensure all multi-select fields are arrays for the edit state
+    const languagesAsArray = Array.isArray(lawyerData.languages)
+      ? lawyerData.languages
+      : lawyerData.languages
+      ? (lawyerData.languages as string).split(',').map(lang => lang.trim())
+      : [];
+
+    const cityAsArray = Array.isArray(lawyerData.city)
+      ? lawyerData.city
+      : lawyerData.city
+      ? (lawyerData.city as unknown as string).split(',').map(c => c.trim())
+      : [];
+      
+    const expertiseAsArray = Array.isArray(lawyerData.area_of_expertise)
+      ? lawyerData.area_of_expertise
+      : lawyerData.area_of_expertise
+      ? (lawyerData.area_of_expertise as unknown as string).split(',').map(e => e.trim())
+      : [];
+
+
+    setEditData({ ...lawyerData, languages: languagesAsArray, city: cityAsArray, area_of_expertise: expertiseAsArray });
     setIsEditing(true);
   };
 
   const handleSave = () => {
-    setLawyerData(editData);
+    const finalData = {
+        ...editData,
+        experience: calculateExperience(editData.practice_start_year)
+    };
+    setLawyerData(finalData);
+
     const response = fetch('/api/lawyer', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(editData),
+      body: JSON.stringify(finalData),
     });
     response
       .then((res) => res.json())
@@ -75,18 +137,57 @@ export default function LawyerProfile() {
         console.error('Error updating lawyer data:', error);
       });
     setIsEditing(false);
+    setIsLangDropdownOpen(false);
+    setIsCityDropdownOpen(false);
+    setIsExpertiseDropdownOpen(false);
   };
 
   const handleCancel = () => {
     setEditData(lawyerData);
     setIsEditing(false);
+    setIsLangDropdownOpen(false);
+    setIsCityDropdownOpen(false);
+    setIsExpertiseDropdownOpen(false);
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | number) => {
     setEditData((prev) => ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleLanguageChange = (language: string) => {
+    const currentLanguages = (editData.languages as string[]) || [];
+    const newLanguages = currentLanguages.includes(language)
+      ? currentLanguages.filter((lang) => lang !== language)
+      : [...currentLanguages, language];
+    setEditData((prev) => ({
+      ...prev,
+      languages: newLanguages,
+    }));
+  };
+
+  const handleCityChange = (city: string) => {
+    const currentCities = editData.city || [];
+    const newCities = currentCities.includes(city)
+      ? currentCities.filter((c) => c !== city)
+      : [...currentCities, city];
+    setEditData((prev) => ({
+      ...prev,
+      city: newCities,
+    }));
+  };
+  
+  const handleExpertiseChange = (expertiseValue: string) => {
+      const currentExpertise = editData.area_of_expertise || [];
+      const newExpertise = currentExpertise.includes(expertiseValue)
+        ? currentExpertise.filter((e) => e !== expertiseValue)
+        : [...currentExpertise, expertiseValue];
+      setEditData((prev) => ({
+        ...prev,
+        area_of_expertise: newExpertise,
+      }));
   };
 
   useEffect(() => {
@@ -103,9 +204,16 @@ export default function LawyerProfile() {
       }
     );
   },[])
+  
+  useEffect(() => {
+    if (isEditing) {
+        const years = calculateExperience(editData.practice_start_year);
+        setEditData(prev => ({ ...prev, experience: years }));
+    }
+  }, [editData.practice_start_year, isEditing]);
+
 
   const handleImageUpload = (type: 'profile' | 'cover') => {
-    // In a real app, this would handle file upload
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -116,9 +224,9 @@ export default function LawyerProfile() {
         reader.onload = (e) => {
           const imageUrl = e.target?.result as string;
           if (type === 'profile') {
-            setEditData((prev) => ({ ...prev, profileImage: imageUrl }));
+            setEditData((prev) => ({ ...prev, profile_picture_url: imageUrl }));
           } else {
-            setEditData((prev) => ({ ...prev, coverImage: imageUrl }));
+            setEditData((prev) => ({ ...prev, cover_picture_url: imageUrl }));
           }
         };
         reader.readAsDataURL(file);
@@ -126,6 +234,29 @@ export default function LawyerProfile() {
     };
     input.click();
   };
+  
+  const allPossibleLanguages = isEditing ? Array.from(new Set([...availableLanguages, ...(editData.languages as string[] || [])])) : [];
+  const allPossibleCities = isEditing ? Array.from(new Set([...availableCities, ...(editData.city || [])])) : [];
+
+  const displayLanguages = Array.isArray(lawyerData.languages)
+  ? lawyerData.languages.join(', ')
+  : lawyerData.languages || '';
+
+  const displayCities = Array.isArray(lawyerData.city)
+  ? lawyerData.city.join(', ')
+  : lawyerData.city || '';
+
+  const displayExperience = calculateExperience(lawyerData.practice_start_year);
+
+  const getExpertiseLabel = (value: string) => {
+    const option = expertiseOptions.find(opt => opt.value === value);
+    return option ? option.label : value;
+  };
+  
+  const displayExpertise = Array.isArray(lawyerData.area_of_expertise)
+    ? lawyerData.area_of_expertise.map(getExpertiseLabel).join(', ')
+    : '';
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -155,7 +286,7 @@ export default function LawyerProfile() {
               <div className="relative">
                 <img
                   src={
-                    isEditing ? editData.profile_picture_url : lawyerData.profile_picture_url
+                    isEditing ? editData?.profile_picture_url : lawyerData?.profile_picture_url
                   }
                   alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
@@ -177,18 +308,18 @@ export default function LawyerProfile() {
                     <div className="flex space-x-2">
                       <input
                         type="text"
-                        value={editData?.first_Name}
+                        value={editData?.first_Name || ''}
                         onChange={(e) =>
-                          handleInputChange('firstName', e.target.value)
+                          handleInputChange('first_Name', e.target.value)
                         }
                         className="text-2xl font-bold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
                         placeholder="First Name"
                       />
                       <input
                         type="text"
-                        value={editData.last_Name}
+                        value={editData.last_Name || ''}
                         onChange={(e) =>
-                          handleInputChange('last_name', e.target.value)
+                          handleInputChange('last_Name', e.target.value)
                         }
                         className="text-2xl font-bold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
                         placeholder="Last Name"
@@ -210,7 +341,7 @@ export default function LawyerProfile() {
                     <span className="font-semibold">{lawyerData?.rating}</span>
                   </div>
                   <div className="text-gray-600">
-                    {lawyerData.totalCases} cases completed
+                    {lawyerData.cases_completed} cases completed
                   </div>
                   <div className="text-gray-600">
                     {lawyerData.successRate}% success rate
@@ -218,52 +349,64 @@ export default function LawyerProfile() {
                 </div>
 
                 {isEditing ? (
-                  <select
-                    value={editData.area_of_expertise}
-                    onChange={(e) =>
-                      handleInputChange('area_of_expertise', e.target.value)
-                    }
-                    className="text-lg text-[#D6A767] font-semibold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
-                  >
-                    <option value="Criminal Law">Criminal Law</option>
-                    <option value="Corporate Law">Corporate Law</option>
-                    <option value="Art Law">Art Law</option>
-                    <option value="Animal Law">Animal Law</option>
-                    <option value="Banking & Finance Law">
-                      Banking & Finance Law
-                    </option>
-                    <option value="Business Law">Business Law</option>
-                    <option value="Cyber Law">Cyber Law</option>
-                    <option value="Family Law">Family Law</option>
-                    <option value="Property Law">Property Law</option>
-                    <option value="Labor Law">Labor Law</option>
-                  </select>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setIsExpertiseDropdownOpen(!isExpertiseDropdownOpen)}
+                      className="flex items-center justify-between w-full p-1 text-lg text-left text-[#D6A767] font-semibold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
+                    >
+                      <span className="truncate">
+                        {editData.area_of_expertise && editData.area_of_expertise.length > 0
+                          ? editData.area_of_expertise.map(getExpertiseLabel).join(', ')
+                          : 'Select Areas of Expertise'}
+                      </span>
+                      <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${isExpertiseDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isExpertiseDropdownOpen && (
+                      <div className="absolute z-30 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        {expertiseOptions.map((option) => (
+                          <label
+                            key={option.value}
+                            className="flex items-center w-full p-3 space-x-3 hover:bg-gray-100 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={(editData.area_of_expertise || []).includes(option.value)}
+                              onChange={() => handleExpertiseChange(option.value)}
+                              className="h-4 w-4 text-[#D6A767] border-gray-300 rounded focus:ring-[#C19653] cursor-pointer"
+                            />
+                            <span className="text-gray-700 font-normal">{option.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <p className="text-lg text-[#D6A767] font-semibold">
-                    {lawyerData.area_of_expertise}
+                    {displayExpertise}
                   </p>
                 )}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex space-x-3">
+              <div className="flex-shrink-0 ml-6">
                 {isEditing ? (
-                  <>
+                  <div className="flex flex-col">
                     <button
                       onClick={handleSave}
-                      className="bg-[#D6A767] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#C19653] transition-colors flex items-center space-x-2"
+                      className="bg-[#D6A767] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#C19653] transition-colors flex items-center justify-center space-x-2"
                     >
                       <Save className="h-4 w-4" />
                       <span>Save</span>
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="bg-gray-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-600 transition-colors flex items-center space-x-2"
+                      className="bg-gray-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-600 transition-colors flex items-center justify-center space-x-2 mt-2"
                     >
                       <X className="h-4 w-4" />
                       <span>Cancel</span>
                     </button>
-                  </>
+                  </div>
                 ) : (
                   <button
                     onClick={handleEdit}
@@ -293,7 +436,7 @@ export default function LawyerProfile() {
                 {isEditing ? (
                   <input
                     type="email"
-                    value={editData.email}
+                    value={editData.email || ''}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
                   />
@@ -307,7 +450,7 @@ export default function LawyerProfile() {
                 {isEditing ? (
                   <input
                     type="tel"
-                    value={editData.mobile_Number}
+                    value={editData.mobile_Number || ''}
                     onChange={(e) => handleInputChange('mobile_Number', e.target.value)}
                     className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
                   />
@@ -316,28 +459,55 @@ export default function LawyerProfile() {
                 )}
               </div>
 
-              <div className="flex items-center space-x-3">
-                <MapPin className="h-5 w-5 text-[#D6A767]" />
+              <div className="flex items-start space-x-3">
+                <MapPin className="h-5 w-5 text-[#D6A767] mt-1" />
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={editData.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
-                    className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                  />
+                    <div className="relative w-full">
+                        <button
+                        type="button"
+                        onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
+                        className="flex items-center justify-between w-full p-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
+                        >
+                        <span className="text-gray-700">
+                            {editData.city && editData.city.length > 0
+                            ? editData.city.join(', ')
+                            : 'Select Cities'}
+                        </span>
+                        <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${isCityDropdownOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        {isCityDropdownOpen && (
+                        <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                            {allPossibleCities.map((city) => (
+                            <label
+                                key={city}
+                                className="flex items-center w-full p-3 space-x-3 hover:bg-gray-100 cursor-pointer"
+                            >
+                                <input
+                                type="checkbox"
+                                checked={(editData.city || []).includes(city)}
+                                onChange={() => handleCityChange(city)}
+                                className="h-4 w-4 text-[#D6A767] border-gray-300 rounded focus:ring-[#C19653] cursor-pointer"
+                                />
+                                <span className="text-gray-700">{city}</span>
+                            </label>
+                            ))}
+                        </div>
+                        )}
+                    </div>
                 ) : (
-                  <span className="text-gray-700">{lawyerData.city?.join(', ')}</span>
+                    <span className="text-gray-700">{displayCities}</span>
                 )}
               </div>
 
               <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-[#D6A767] mt-1" />
+                <MapPin className="h-5 w-5 text-transparent mt-1" /> {/* Spacer */}
                 {isEditing ? (
                   <textarea
-                    value={editData.address}
+                    value={editData.address || ''}
                     onChange={(e) =>
                       handleInputChange('address', e.target.value)
                     }
+                    placeholder="Full Address"
                     className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none resize-none"
                     rows={2}
                   />
@@ -363,7 +533,7 @@ export default function LawyerProfile() {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={editData.enrollment_id}
+                      value={editData.enrollment_id || ''}
                       onChange={(e) =>
                         handleInputChange('enrollment_id', e.target.value)
                       }
@@ -380,31 +550,51 @@ export default function LawyerProfile() {
               <div className="flex items-center space-x-3">
                 <Calendar className="h-5 w-5 text-[#D6A767]" />
                 <div>
-                  <span className="text-sm text-gray-500">Experience:</span>
+                    <span className="text-sm text-gray-500">Practice Start Year:</span>
+                    {isEditing ? (
+                        <input
+                            type="number"
+                            value={editData.practice_start_year || ''}
+                            placeholder="e.g., 2010"
+                            onChange={(e) =>
+                                handleInputChange('practice_start_year', Number(e.target.value))
+                            }
+                            className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
+                        />
+                    ) : (
+                        <p className="text-gray-700 font-medium">
+                            {lawyerData.practice_start_year}
+                        </p>
+                    )}
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <Award className="h-5 w-5 text-[#D6A767]" />
+                <div>
+                  <span className="text-sm text-gray-500">Years of Experience:</span>
                   {isEditing ? (
                     <input
                       type="number"
-                      value={editData.experience}
-                      onChange={(e) =>
-                        handleInputChange('experience', e.target.value)
-                      }
-                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
+                      value={editData.experience || 0}
+                      readOnly
+                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none bg-gray-100 cursor-not-allowed"
                     />
                   ) : (
                     <p className="text-gray-700 font-medium">
-                      {lawyerData.experience} years
+                      {displayExperience} years
                     </p>
                   )}
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <Award className="h-5 w-5 text-[#D6A767] mt-1" />
+                <Briefcase className="h-5 w-5 text-[#D6A767] mt-1" />
                 <div>
                   <span className="text-sm text-gray-500">Court Practice:</span>
                   {isEditing ? (
                     <textarea
-                      value={editData.courtPractice}
+                      value={editData.courtPractice || ''}
                       onChange={(e) =>
                         handleInputChange('courtPractice', e.target.value)
                       }
@@ -418,29 +608,6 @@ export default function LawyerProfile() {
                   )}
                 </div>
               </div>
-
-              {/* <div className="flex items-center space-x-3">
-                <span className="text-[#D6A767] font-bold">₹</span>
-                <div>
-                  <span className="text-sm text-gray-500">
-                    Consultation Fee:
-                  </span>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editData.consultationFee}
-                      onChange={(e) =>
-                        handleInputChange('consultationFee', e.target.value)
-                      }
-                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                    />
-                  ) : (
-                    <p className="text-gray-700 font-medium">
-                      {lawyerData.consultationFee}
-                    </p>
-                  )}
-                </div>
-              </div> */}
             </div>
           </div>
 
@@ -456,7 +623,7 @@ export default function LawyerProfile() {
                 <span className="text-sm text-gray-500">Education:</span>
                 {isEditing ? (
                   <textarea
-                    value={editData.education}
+                    value={editData.education || ''}
                     onChange={(e) =>
                       handleInputChange('education', e.target.value)
                     }
@@ -473,17 +640,41 @@ export default function LawyerProfile() {
               <div>
                 <span className="text-sm text-gray-500">Languages:</span>
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={editData.languages}
-                    onChange={(e) =>
-                      handleInputChange('languages', e.target.value)
-                    }
-                    className="block w-full mt-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                  />
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                      className="flex items-center justify-between w-full mt-1 p-2 border border-gray-300 rounded-lg text-left focus:outline-none focus:ring-2 focus:ring-[#D6A767]"
+                    >
+                      <span className="text-gray-700">
+                        {editData.languages && (editData.languages as string[]).length > 0
+                          ? (editData.languages as string[]).join(', ')
+                          : 'Select Languages'}
+                      </span>
+                      <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isLangDropdownOpen && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        {allPossibleLanguages.map((lang) => (
+                          <label
+                            key={lang}
+                            className="flex items-center w-full p-3 space-x-3 hover:bg-gray-100 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={(editData.languages as string[] || []).includes(lang)}
+                              onChange={() => handleLanguageChange(lang)}
+                              className="h-4 w-4 text-[#D6A767] border-gray-300 rounded focus:ring-[#C19653] cursor-pointer"
+                            />
+                            <span className="text-gray-700">{lang}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <p className="text-gray-700 font-medium">
-                    {lawyerData.languages}
+                    {displayLanguages}
                   </p>
                 )}
               </div>
@@ -496,7 +687,7 @@ export default function LawyerProfile() {
           <h2 className="text-xl font-bold text-black mb-6">About Me</h2>
           {isEditing ? (
             <textarea
-              value={editData.bio}
+              value={editData.bio || ''}
               onChange={(e) => handleInputChange('bio', e.target.value)}
               className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent resize-none"
               rows={4}
@@ -505,33 +696,6 @@ export default function LawyerProfile() {
           ) : (
             <p className="text-gray-700 leading-relaxed">{lawyerData.bio}</p>
           )}
-        </div>
-
-        {/* Statistics */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-black mb-6">
-            Professional Statistics
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 bg-[#E6D0B1] rounded-lg">
-              <div className="text-3xl font-bold text-[#D6A767] mb-2">
-                {lawyerData.totalCases}
-              </div>
-              <div className="text-sm text-gray-600">Total Cases</div>
-            </div>
-            <div className="text-center p-4 bg-[#E6D0B1] rounded-lg">
-              <div className="text-3xl font-bold text-[#D6A767] mb-2">
-                {lawyerData.successRate}%
-              </div>
-              <div className="text-sm text-gray-600">Success Rate</div>
-            </div>
-            <div className="text-center p-4 bg-[#E6D0B1] rounded-lg">
-              <div className="text-3xl font-bold text-[#D6A767] mb-2">
-                {lawyerData.rating}
-              </div>
-              <div className="text-sm text-gray-600">Average Rating</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

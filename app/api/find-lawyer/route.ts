@@ -19,10 +19,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Find lawyers matching city and area of expertise
+
     const lawyers = await Lawyer.find({
       city: { $in: [city] },
       area_of_expertise: { $in: [area_of_expertise] }
     }).select('-password_hash'); // exclude password_hash
+
 
     return NextResponse.json(
       { message: 'Lawyers fetched successfully!', data: lawyers },
