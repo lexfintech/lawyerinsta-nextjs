@@ -36,7 +36,7 @@ export default function Login() {
         redirect: 'follow', // follow redirect to /profile
       });
 
-      console.log(response)
+      console.log(response);
 
       // If server redirected to /profile, this won't return JSON
       if (response.ok) {

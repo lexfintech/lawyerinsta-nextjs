@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
       !email ||
       !password_hash ||
       !mobile_Number ||
-      !Array.isArray(city) || city.length === 0
+      !Array.isArray(city) ||
+      city.length === 0
     ) {
       return NextResponse.json(
         { message: 'Missing required fields or invalid city format' },
@@ -94,26 +95,23 @@ export async function POST(req: NextRequest) {
     //Return success response with lawyer data and the token
 
     const response = NextResponse.json(
-          { message: 'registering successful'},
-          { status: 200 },
-        );
-    
-        // Set the JWT in a secure HTTP-only cookie
-        response.headers.set(
-          'Set-Cookie',
-          serialize('auth_token', token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: 'strict',
-            path: '/',
-            maxAge: 60 * 60 * 24,
-          }),
-        );
-    
-        return response;
+      { message: 'registering successful' },
+      { status: 200 },
+    );
 
+    // Set the JWT in a secure HTTP-only cookie
+    response.headers.set(
+      'Set-Cookie',
+      serialize('auth_token', token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60 * 60 * 24,
+      }),
+    );
 
-    
+    return response;
   } catch (error) {
     console.error('Error registering lawyer:', error);
     // Provide a more specific error message if possible, or a generic one
