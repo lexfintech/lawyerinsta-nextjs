@@ -57,14 +57,12 @@ const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
     profile_overview: { type: String, default: null },
     profile_picture_url: {
       type: String,
-      default:
-        'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffree-icon%2Fprofile_3135715&psig=AOvVaw20Qv8sJmFKALbu8dkSB9Ai&ust=1752485501328000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCf0LDDuY4DFQAAAAAdAAAAABAE',
+      default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZnScE9YP90Vr-VuiOJww6kbvMmAIBgVHWwA&s'
     },
     cover_picture_url: {
       type: String,
-      default:
-        'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.shutterstock.com%2Fsearch%2Flawyer-banner&psig=AOvVaw1BuvjfB2bFOH_91-Cw1Ac0&ust=1752485551168000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCIim4enDuY4DFQAAAAAdAAAAABAE',
-    },
+      default: ''
+     },
     education: { type: String, default: null },
     languages: { type: [String], default: [] },
     bio: { type: String, default: null },
