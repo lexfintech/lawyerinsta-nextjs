@@ -4,19 +4,21 @@ import { Lawyer } from '@/models/lawyer';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   await connectDb();
 
   const { id } = params; // this is the enrollment_id from URL
 
   try {
-    const lawyer = await Lawyer.findOne({ enrollment_id: id }).select('-password_hash -_id');
+    const lawyer = await Lawyer.findOne({ enrollment_id: id }).select(
+      '-password_hash -_id',
+    );
 
     if (!lawyer) {
       return NextResponse.json(
         { message: 'Lawyer not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -25,7 +27,7 @@ export async function GET(
     console.error('Error fetching lawyer:', error);
     return NextResponse.json(
       { message: 'Server Error', error: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -9,7 +9,7 @@ export interface ILawyer extends Document {
   mobile_Number: number;
   city: string[];
   WhatsApp_Number: number;
-  address: string,
+  address: string;
   intro_video_url: string;
   is_active: boolean;
   email_verified: boolean;
@@ -30,7 +30,7 @@ export interface ILawyer extends Document {
   is_premium: boolean;
   premium_expires_at: Date;
   area_of_expertise: string[];
-  cases_completed: number,
+  cases_completed: number;
 }
 
 const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
@@ -57,12 +57,13 @@ const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
     profile_overview: { type: String, default: null },
     profile_picture_url: {
       type: String,
-      default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZnScE9YP90Vr-VuiOJww6kbvMmAIBgVHWwA&s'
+      default:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZnScE9YP90Vr-VuiOJww6kbvMmAIBgVHWwA&s',
     },
     cover_picture_url: {
       type: String,
-      default: ''
-     },
+      default: '',
+    },
     education: { type: String, default: null },
     languages: { type: [String], default: [] },
     bio: { type: String, default: null },

@@ -23,9 +23,9 @@ export default function Header() {
   ];
 
   const handleLogout = async () => {
-  await fetch('/api/logout');
-  window.location.href = '/';
-};
+    await fetch('/api/logout');
+    window.location.href = '/';
+  };
 
   return (
     <header className="bg-[#3C222F] shadow-md sticky top-0 z-50">
