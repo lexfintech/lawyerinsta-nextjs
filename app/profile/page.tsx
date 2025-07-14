@@ -33,21 +33,23 @@ const availableCities = [
     'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow',
 ];
 
+// CORRECTED: 'value' should be the raw data format, 'label' is for display.
 const expertiseOptions = [
-    { value: 'Criminal Law', label: 'Criminal Law' },
-    { value: 'Corporate Law', label: 'Corporate Law' },
-    { value: 'Art Law', label: 'Art Law' },
-    { value: 'Animal Law', label: 'Animal Law' },
-    { value: 'Banking & Finance Law', label: 'Banking & Finance Law' },
-    { value: 'Business Law', label: 'Business Law' },
-    { value: 'Cyber Law', label: 'Cyber Law' },
-    { value: 'Family Law', label: 'Family Law' },
-    { value: 'Property Law', label: 'Property Law' },
-    { value: 'Labor Law', label: 'Labor Law' },
+    { value: 'criminal_law', label: 'Criminal Law' },
+    { value: 'corporate_law', label: 'Corporate Law' },
+    { value: 'art_law', label: 'Art Law' },
+    { value: 'animal_law', label: 'Animal Law' },
+    { value: 'banking_&_finance_law', label: 'Banking & Finance Law' },
+    { value: 'business_law', label: 'Business Law' },
+    { value: 'cyber_law', label: 'Cyber Law' },
+    { value: 'family_law', label: 'Family Law' },
+    { value: 'property_law', label: 'Property Law' },
+    { value: 'labor_law', label: 'Labor Law' },
 ];
 
 
 type LawyerData = {
+  cases_completed: number;
   first_Name?: string;
   last_Name?: string;
   email?: string;
@@ -68,16 +70,29 @@ type LawyerData = {
   education?: string;
   languages?: string | string[];
   bio?: string;
-  cases_completed?: number;
 };
 
 export default function LawyerProfile() {
-  const [lawyerData, setLawyerData] = useState<LawyerData>({});
+  const [lawyerData, setLawyerData] = useState<LawyerData>({
+    cases_completed: 0,
+  });
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState<LawyerData>({});
+  const [editData, setEditData] = useState<LawyerData>({ cases_completed: 0 });
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const [isExpertiseDropdownOpen, setIsExpertiseDropdownOpen] = useState(false);
+
+  const getYearFromEnrollment = (id: string | undefined): number | undefined => {
+      if (!id || id.length < 4) return undefined;
+      const potentialYear = id.slice(-4);
+      if (!isNaN(Number(potentialYear))) {
+          const year = parseInt(potentialYear, 10);
+          if (year > 1950 && year <= new Date().getFullYear()) {
+              return year;
+          }
+      }
+      return undefined;
+  };
 
   const calculateExperience = (startYear: number | undefined): number => {
     if (!startYear || isNaN(startYear)) return 0;
@@ -113,9 +128,13 @@ export default function LawyerProfile() {
   };
 
   const handleSave = () => {
+    const derivedStartYear = getYearFromEnrollment(editData.enrollment_id);
+    const calculatedExperience = calculateExperience(derivedStartYear);
+    
     const finalData = {
         ...editData,
-        experience: calculateExperience(editData.practice_start_year)
+        practice_start_year: derivedStartYear,
+        experience: calculatedExperience,
     };
     setLawyerData(finalData);
 
@@ -207,10 +226,15 @@ export default function LawyerProfile() {
   
   useEffect(() => {
     if (isEditing) {
-        const years = calculateExperience(editData.practice_start_year);
-        setEditData(prev => ({ ...prev, experience: years }));
+        const derivedYear = getYearFromEnrollment(editData.enrollment_id);
+        const calculatedExp = calculateExperience(derivedYear);
+        setEditData(prev => ({ 
+            ...prev, 
+            practice_start_year: derivedYear,
+            experience: calculatedExp
+        }));
     }
-  }, [editData.practice_start_year, isEditing]);
+  }, [editData.enrollment_id, isEditing]);
 
 
   const handleImageUpload = (type: 'profile' | 'cover') => {
@@ -246,8 +270,6 @@ export default function LawyerProfile() {
   ? lawyerData.city.join(', ')
   : lawyerData.city || '';
 
-  const displayExperience = calculateExperience(lawyerData.practice_start_year);
-
   const getExpertiseLabel = (value: string) => {
     const option = expertiseOptions.find(opt => opt.value === value);
     return option ? option.label : value;
@@ -256,6 +278,9 @@ export default function LawyerProfile() {
   const displayExpertise = Array.isArray(lawyerData.area_of_expertise)
     ? lawyerData.area_of_expertise.map(getExpertiseLabel).join(', ')
     : '';
+
+  const displayedPracticeStartYear = getYearFromEnrollment(lawyerData.enrollment_id);
+  const displayExperience = calculateExperience(displayedPracticeStartYear);
 
 
   return (
@@ -338,14 +363,12 @@ export default function LawyerProfile() {
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="flex items-center space-x-1">
                     <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                    <span className="font-semibold">{lawyerData?.rating}</span>
+                    
                   </div>
                   <div className="text-gray-600">
                     {lawyerData.cases_completed} cases completed
                   </div>
-                  <div className="text-gray-600">
-                    {lawyerData.successRate}% success rate
-                  </div>
+                  
                 </div>
 
                 {isEditing ? (
@@ -529,15 +552,16 @@ export default function LawyerProfile() {
               <div className="flex items-center space-x-3">
                 <Scale className="h-5 w-5 text-[#D6A767]" />
                 <div>
-                  <span className="text-sm text-gray-500">Enrollment ID:</span>
+                  <span className="text-sm text-gray-500">Enrollment Number:</span>
                   {isEditing ? (
                     <input
                       type="text"
                       value={editData.enrollment_id || ''}
+                      readOnly
                       onChange={(e) =>
                         handleInputChange('enrollment_id', e.target.value)
                       }
-                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
+                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none cursor-not-allowed bg-gray-100"
                     />
                   ) : (
                     <p className="text-gray-700 font-medium">
@@ -555,15 +579,13 @@ export default function LawyerProfile() {
                         <input
                             type="number"
                             value={editData.practice_start_year || ''}
-                            placeholder="e.g., 2010"
-                            onChange={(e) =>
-                                handleInputChange('practice_start_year', Number(e.target.value))
-                            }
-                            className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
+                            placeholder="Derived from Enrollment No."
+                            readOnly
+                            className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none bg-gray-100 cursor-not-allowed"
                         />
                     ) : (
                         <p className="text-gray-700 font-medium">
-                            {lawyerData.practice_start_year}
+                            {displayedPracticeStartYear}
                         </p>
                     )}
                 </div>
@@ -583,27 +605,6 @@ export default function LawyerProfile() {
                   ) : (
                     <p className="text-gray-700 font-medium">
                       {displayExperience} years
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <Briefcase className="h-5 w-5 text-[#D6A767] mt-1" />
-                <div>
-                  <span className="text-sm text-gray-500">Court Practice:</span>
-                  {isEditing ? (
-                    <textarea
-                      value={editData.courtPractice || ''}
-                      onChange={(e) =>
-                        handleInputChange('courtPractice', e.target.value)
-                      }
-                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none resize-none"
-                      rows={2}
-                    />
-                  ) : (
-                    <p className="text-gray-700 font-medium">
-                      {lawyerData.courtPractice}
                     </p>
                   )}
                 </div>
@@ -678,6 +679,28 @@ export default function LawyerProfile() {
                   </p>
                 )}
               </div>
+
+              <div className="flex items-start space-x-3">
+                <Briefcase className="h-5 w-5 text-[#D6A767] mt-1" />
+                <div>
+                  <span className="text-sm text-gray-500">Court Practice:</span>
+                  {isEditing ? (
+                    <textarea
+                      value={editData.courtPractice || ''}
+                      onChange={(e) =>
+                        handleInputChange('courtPractice', e.target.value)
+                      }
+                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none resize-none"
+                      rows={2}
+                    />
+                  ) : (
+                    <p className="text-gray-700 font-medium">
+                      {lawyerData.courtPractice}
+                    </p>
+                  )}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
