@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react';
-import { toast } from 'sonner';
+import { Eye, EyeOff, Info } from 'lucide-react';
+import { toast, Toaster } from 'sonner';
 import { useRouter } from 'next/navigation';
 
 const cities = [
@@ -28,19 +28,28 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+    
+    let processedValue = value;
+    
+    if (name === 'enrollment_id') {
+        processedValue = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    }
+    
     setFormData((prev: any) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? checked : processedValue,
     }));
   };
 
   const handleCityCheckboxChange = (city: string) => {
-    setFormData((prev: { city: string[]; }) => {
+    // FIX: Removed incorrect type annotation on 'prev'. TypeScript now correctly infers the full formData type.
+    setFormData((prev) => {
       const exists = prev.city.includes(city);
       const updatedCities = exists
         ? prev.city.filter((c: string) => c !== city)
@@ -54,11 +63,13 @@ export default function SignUp() {
     const requiredFields = ['first_Name', 'last_Name', 'email', 'mobile_Number', 'enrollment_id', 'password_hash', 'confirmPassword'];
 
     requiredFields.forEach(field => {
-      if (!formData[field]?.trim()) newErrors[field] = `${field} is required.`;
+      if (!(formData[field as keyof typeof formData] as string)?.trim()) {
+          newErrors[field] = 'This field is required.';
+      }
     });
 
-    if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid.';
-    if (!/^\d{10}$/.test(formData.mobile_Number)) newErrors.mobile_Number = 'Mobile number must be 10 digits.';
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid.';
+    if (formData.mobile_Number && !/^\d{10}$/.test(formData.mobile_Number)) newErrors.mobile_Number = 'Mobile number must be 10 digits.';
     if (formData.password_hash.length < 6) newErrors.password_hash = 'Password must be at least 6 characters.';
     if (formData.confirmPassword !== formData.password_hash) newErrors.confirmPassword = 'Passwords do not match.';
     if (!formData.termsAccepted) newErrors.termsAccepted = 'You must accept the terms.';
@@ -69,32 +80,36 @@ export default function SignUp() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (validate()) {
-    const response = await fetch('/api/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+    e.preventDefault();
+    setErrors({}); // Reset errors
+    if (isLoading) return; // Prevent multiple submissions
+    if (validate()) {
+      setIsLoading(true);
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      toast.success('Registration successful! Redirecting...');
-      setTimeout(() => {
-        router.push('/profile');
-      }, 1500);
+      if (response.ok) {
+        toast.success('Registration successful! Redirecting...');
+        setIsLoading(false);
+        setTimeout(() => {
+          router.push('/profile');
+        }, 1500);
+      } else {
+        toast.error(data.message || 'Registration failed');
+        console.error('🚫 Registration failed:', data);
+        setErrors({ api: data.message || 'Registration failed' });
+      }
     } else {
-      toast.error(data.message || 'Registration failed');
-      console.error('🚫 Registration failed:', data);
-      setErrors({ api: data.message || 'Registration failed' });
+      console.warn('🚫 Validation failed');
     }
-  } else {
-    console.warn('🚫 Validation failed');
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -115,14 +130,15 @@ export default function SignUp() {
                   <input
                     name={field}
                     type="text"
-                    value={formData[field]}
+                    // FIX: Assert value as string to resolve type conflict.
+                    value={formData[field as keyof typeof formData] as string}
                     onChange={handleChange}
                     onKeyDown={(e) => {
-                      const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete', 'Shift'];
+                      const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete', 'Shift', ' '];
                       const isLetter = /^[a-zA-Z]$/.test(e.key);
                       if (!isLetter && !allowedKeys.includes(e.key)) e.preventDefault();
                     }}
-                    className="input-style"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#D6A767] focus:border-[#D6A767]"
                     placeholder={field === 'first_Name' ? 'First name' : 'Last name'}
                   />
                   {errors[field] && <p className="text-red-500 text-xs mt-1">{errors[field]}</p>}
@@ -131,18 +147,29 @@ export default function SignUp() {
             </div>
 
             {[
-              { name: 'enrollment_id', label: 'Enrollment ID *', type: 'text' },
+              { name: 'enrollment_id', label: 'Enrollment Number *', type: 'text' },
               { name: 'email', label: 'Email Address *', type: 'email' },
               { name: 'mobile_Number', label: 'Mobile Number *', type: 'text' },
             ].map(({ name, label, type }) => (
               <div key={name}>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                <div className="flex items-center space-x-1.5 mb-1">
+                    <label className="block text-sm font-medium text-gray-700">{label}</label>
+                    {name === 'enrollment_id' && (
+                        <div className="relative group flex items-center">
+                            <Info className="h-4 w-4 text-gray-400" />
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-900 text-white text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                This will be your username for login.
+                            </div>
+                        </div>
+                    )}
+                </div>
                 <input
                   name={name}
                   type={type}
-                  value={formData[name]}
+                  // FIX: Assert value as string to resolve type conflict.
+                  value={formData[name as keyof typeof formData] as string}
                   onChange={handleChange}
-                  className="input-style"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#D6A767] focus:border-[#D6A767]"
                   placeholder={`Enter your ${label.replace('*', '').trim()}`}
                 />
                 {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name]}</p>}
@@ -155,7 +182,7 @@ export default function SignUp() {
                 <button
                   type="button"
                   onClick={() => setCityDropdownOpen(!cityDropdownOpen)}
-                  className="w-full text-left input-style"
+                  className="w-full text-left px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white"
                 >
                   {formData.city.length > 0
                     ? formData.city.join(', ')
@@ -167,7 +194,7 @@ export default function SignUp() {
                       <label key={city} className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
                         <input
                           type="checkbox"
-                          className="mr-2"
+                          className="mr-2 h-4 w-4 text-[#D6A767] focus:ring-[#C19653] border-gray-300 rounded"
                           value={city}
                           checked={formData.city.includes(city)}
                           onChange={() => handleCityCheckboxChange(city)}
@@ -192,12 +219,13 @@ export default function SignUp() {
                   <input
                     name={name}
                     type={show ? 'text' : 'password'}
-                    value={formData[name]}
+                    // FIX: Assert value as string to resolve type conflict.
+                    value={formData[name as keyof typeof formData] as string}
                     onChange={handleChange}
-                    className="input-style pr-12"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#D6A767] focus:border-[#D6A767] pr-12"
                     placeholder={`Enter ${label.replace('*', '').trim()}`}
                   />
-                  <button type="button" onClick={() => toggle(!show)} className="eye-toggle">
+                  <button type="button" onClick={() => toggle(!show)} className="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500">
                     {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
@@ -224,7 +252,7 @@ export default function SignUp() {
               <p className="text-red-500 text-xs mt-1">{errors.termsAccepted}</p>
             )}
 
-            <button type="submit" className="btn-primary w-full">Register as Lawyer</button>
+            <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#D6A767] hover:bg-[#C19653] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C19653]">{isLoading ? 'Registering...' : 'Register as Lawyer' }</button>
           </form>
 
           <div className="mt-6 text-center">
@@ -235,6 +263,7 @@ export default function SignUp() {
           </div>
         </div>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 }

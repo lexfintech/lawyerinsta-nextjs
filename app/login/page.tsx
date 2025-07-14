@@ -72,7 +72,7 @@ export default function Login() {
                 htmlFor="enrollment-id"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Enrollment ID
+                Enrollment Number
               </label>
               <input
                 id="enrollment-id"
@@ -82,7 +82,7 @@ export default function Login() {
                 onChange={(e) => setEnrollmentId(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-                placeholder="Enter your enrollment ID"
+                placeholder="Enter your enrollment number"
               />
             </div>
 
