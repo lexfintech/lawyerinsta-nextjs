@@ -24,6 +24,8 @@ export async function POST(req: NextRequest) {
       email,
       password_hash,
       mobile_Number,
+      area_of_expertise,
+      termsAccepted,
       city, // Assuming 'city' is an array of strings or similar
     } = body;
 
@@ -36,7 +38,10 @@ export async function POST(req: NextRequest) {
       !password_hash ||
       !mobile_Number ||
       !Array.isArray(city) ||
-      city.length === 0
+      city.length === 0 ||
+      !Array.isArray(area_of_expertise) ||
+      area_of_expertise.length === 0 ||
+      !termsAccepted
     ) {
       return NextResponse.json(
         { message: 'Missing required fields or invalid city format' },

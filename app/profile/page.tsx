@@ -38,14 +38,108 @@ const availableLanguages = [
 const availableCities = [
   'Mumbai',
   'Delhi',
-  'Bangalore',
+  'Bengaluru',
   'Hyderabad',
+  'Ahmedabad',
   'Chennai',
   'Kolkata',
   'Pune',
-  'Ahmedabad',
   'Jaipur',
   'Lucknow',
+  'Kanpur',
+  'Nagpur',
+  'Indore',
+  'Thane',
+  'Bhopal',
+  'Visakhapatnam',
+  'Patna',
+  'Vadodara',
+  'Ghaziabad',
+  'Ludhiana',
+  'Agra',
+  'Nashik',
+  'Faridabad',
+  'Meerut',
+  'Rajkot',
+  'Kalyan-Dombivli',
+  'Vasai-Virar',
+  'Varanasi',
+  'Srinagar',
+  'Aurangabad',
+  'Dhanbad',
+  'Amritsar',
+  'Navi Mumbai',
+  'Allahabad (Prayagraj)',
+  'Ranchi',
+  'Howrah',
+  'Coimbatore',
+  'Jabalpur',
+  'Gwalior',
+  'Vijayawada',
+  'Jodhpur',
+  'Madurai',
+  'Raipur',
+  'Kota',
+  'Guwahati',
+  'Chandigarh',
+  'Solapur',
+  'Hubli-Dharwad',
+  'Bareilly',
+  'Mysuru',
+  'Tiruchirappalli',
+  'Moradabad',
+  'Tiruppur',
+  'Salem',
+  'Bhilai',
+  'Guntur',
+  'Bhiwandi',
+  'Saharanpur',
+  'Gorakhpur',
+  'Bikaner',
+  'Amravati',
+  'Noida',
+  'Jamshedpur',
+  'Bhilwara',
+  'Warangal',
+  'Cuttack',
+  'Firozabad',
+  'Udaipur',
+  'Ajmer',
+  'Bilaspur',
+  'Panipat',
+  'Aizawl',
+  'Silchar',
+  'Puducherry',
+  'Shimla',
+  'Itanagar',
+  'Shillong',
+  'Kohima',
+  'Gangtok',
+  'Imphal',
+  'Agartala',
+  'Dehradun',
+  'Muzaffarpur',
+  'Haridwar',
+  'Mathura',
+  'Aligarh',
+  'Satna',
+  'Rewa',
+  'Nanded',
+  'Latur',
+  'Erode',
+  'Tirunelveli',
+  'Karimnagar',
+  'Nizamabad',
+  'Kolhapur',
+  'Ichalkaranji',
+  'Davangere',
+  'Ujjain',
+  'Jhansi',
+  'Tumkur',
+  'Mangalore',
+  'Bellary',
+  'Ratlam',
+  'Kakinada',
 ];
 
 const expertiseOptions = [
@@ -63,6 +157,7 @@ const expertiseOptions = [
 
 // --- TYPE DEFINITION ---
 type LawyerData = {
+  cases_completed: number;
   court_practice: string;
   first_Name?: string;
   last_Name?: string;
@@ -440,11 +535,9 @@ export default function LawyerProfile() {
                 </div>
                 <div className="flex items-center space-x-4 mb-4 text-gray-600">
                   <div className="flex items-center space-x-1">
-                    <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                    <span className="font-semibold">{lawyerData.rating}</span>
+                    {/* <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                     <div>{lawyerData.cases_completed} cases</div> */}
                   </div>
-                  <div>{lawyerData.totalCases} cases</div>
-                  <div>{lawyerData.successRate}% success</div>
                 </div>
               </div>
               <div className="flex-shrink-0">
@@ -630,7 +723,7 @@ export default function LawyerProfile() {
               )}
             </div>
             <div>
-              <h3 className="card-label">Languages Spoken</h3>
+              <h3 className="card-label">Languages Known</h3>
               {isEditing ? (
                 <AutocompleteMultiSelect
                   options={languageOptions}

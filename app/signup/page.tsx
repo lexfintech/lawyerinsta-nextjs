@@ -5,19 +5,164 @@ import Link from 'next/link';
 import { Eye, EyeOff, Info } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 import { useRouter } from 'next/navigation';
+import Select from 'react-select';
 
 const cities = [
   'Mumbai',
   'Delhi',
-  'Bangalore',
+  'Bengaluru',
   'Hyderabad',
+  'Ahmedabad',
   'Chennai',
   'Kolkata',
-  'Ahmedabad',
   'Pune',
   'Jaipur',
   'Lucknow',
-];
+  'Kanpur',
+  'Nagpur',
+  'Indore',
+  'Thane',
+  'Bhopal',
+  'Visakhapatnam',
+  'Patna',
+  'Vadodara',
+  'Ghaziabad',
+  'Ludhiana',
+  'Agra',
+  'Nashik',
+  'Faridabad',
+  'Meerut',
+  'Rajkot',
+  'Kalyan-Dombivli',
+  'Vasai-Virar',
+  'Varanasi',
+  'Srinagar',
+  'Aurangabad',
+  'Dhanbad',
+  'Amritsar',
+  'Navi Mumbai',
+  'Allahabad (Prayagraj)',
+  'Ranchi',
+  'Howrah',
+  'Coimbatore',
+  'Jabalpur',
+  'Gwalior',
+  'Vijayawada',
+  'Jodhpur',
+  'Madurai',
+  'Raipur',
+  'Kota',
+  'Guwahati',
+  'Chandigarh',
+  'Solapur',
+  'Hubli-Dharwad',
+  'Bareilly',
+  'Mysuru',
+  'Tiruchirappalli',
+  'Moradabad',
+  'Tiruppur',
+  'Salem',
+  'Bhilai',
+  'Guntur',
+  'Bhiwandi',
+  'Saharanpur',
+  'Gorakhpur',
+  'Bikaner',
+  'Amravati',
+  'Noida',
+  'Jamshedpur',
+  'Bhilwara',
+  'Warangal',
+  'Cuttack',
+  'Firozabad',
+  'Udaipur',
+  'Ajmer',
+  'Bilaspur',
+  'Panipat',
+  'Aizawl',
+  'Silchar',
+  'Puducherry',
+  'Shimla',
+  'Itanagar',
+  'Shillong',
+  'Kohima',
+  'Gangtok',
+  'Imphal',
+  'Agartala',
+  'Dehradun',
+  'Muzaffarpur',
+  'Haridwar',
+  'Mathura',
+  'Aligarh',
+  'Satna',
+  'Rewa',
+  'Nanded',
+  'Latur',
+  'Erode',
+  'Tirunelveli',
+  'Karimnagar',
+  'Nizamabad',
+  'Kolhapur',
+  'Ichalkaranji',
+  'Davangere',
+  'Ujjain',
+  'Jhansi',
+  'Tumkur',
+  'Mangalore',
+  'Bellary',
+  'Ratlam',
+  'Kakinada',
+].map((city) => ({ value: city, label: city }));
+
+const specializations = [
+  'Admiralty Law',
+  'Animal Law',
+  'Arbitration Law',
+  'Armed Force Law',
+  'Art Law',
+  'Artificial Intelligence',
+  'Asset Management',
+  'Aviation Law',
+  'Banking law',
+  'Bankruptcy & Insolvency (IBC)',
+  'Business Law',
+  'Capital Markets',
+  'Civil litigation',
+  'Commercial litigation',
+  'Company law',
+  'Competition & Anti-trust law',
+  'Constitutional Law',
+  'Consumer law',
+  'Contracts',
+  'Conveyance',
+  'Copyright law',
+  'Corporate secretarial',
+  'Criminal law',
+  'Cross Border Transaction',
+  'Customs',
+  'Cyber law',
+  'Data Privacy & Protection',
+  'Debt Recovery',
+  'Dispute Resolution',
+  'Divorce',
+  "Director's disputes",
+  'Domestic & Foreign Investment',
+  'Due Diligience',
+  'Economic offences',
+  'Electricity law',
+  'Employment law',
+  'Energy law',
+  'Entertainment law',
+  'Enviornment law',
+  'Equity & Capital restructuring',
+  'Family law',
+  'Fashion law',
+  'Funding Advisory',
+  'Gaming law',
+  'Healthcare law',
+  'Human RIghts law',
+  'Immigration law',
+].map((item) => ({ value: item, label: item }));
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -30,39 +175,25 @@ export default function SignUp() {
     confirmPassword: '',
     termsAccepted: false,
     city: [] as string[],
+    area_of_expertise: [] as string[],
   });
 
   const [errors, setErrors] = useState<any>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-
     let processedValue = value;
-
     if (name === 'enrollment_id') {
       processedValue = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     }
-
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : processedValue,
     }));
-  };
-
-  const handleCityCheckboxChange = (city: string) => {
-    // FIX: Removed incorrect type annotation on 'prev'. TypeScript now correctly infers the full formData type.
-    setFormData((prev) => {
-      const exists = prev.city.includes(city);
-      const updatedCities = exists
-        ? prev.city.filter((c: string) => c !== city)
-        : [...prev.city, city];
-      return { ...prev, city: updatedCities };
-    });
   };
 
   const validate = () => {
@@ -95,6 +226,8 @@ export default function SignUp() {
       newErrors.termsAccepted = 'You must accept the terms.';
     if (formData.city.length === 0)
       newErrors.city = 'Select at least one city.';
+    if (formData.area_of_expertise.length === 0)
+      newErrors.area_of_expertise = 'Select at least one expertise.';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -102,35 +235,27 @@ export default function SignUp() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors({}); // Reset errors
-    if (isLoading) return; // Prevent multiple submissions
+    setErrors({});
+    if (isLoading) return;
     if (validate()) {
       setIsLoading(true);
       const response = await fetch('/api/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
       const data = await response.json();
 
       if (response.ok) {
         toast.success('Registration successful! Redirecting...');
-        setIsLoading(false);
-        setTimeout(() => {
-          router.push('/profile');
-        }, 1500);
+        setTimeout(() => router.push('/profile'), 1500);
       } else {
         toast.error(data.message || 'Registration failed');
-        setIsLoading(false);
         setErrors({ api: data.message || 'Registration failed' });
       }
-    } else {
-      console.warn('🚫 Validation failed');
-      toast.error('Please fix the errors before submitting.');
       setIsLoading(false);
+    } else {
+      toast.error('Please fix the errors before submitting.');
     }
   };
 
@@ -157,24 +282,9 @@ export default function SignUp() {
                   <input
                     name={field}
                     type="text"
-                    // FIX: Assert value as string to resolve type conflict.
                     value={formData[field as keyof typeof formData] as string}
                     onChange={handleChange}
-                    onKeyDown={(e) => {
-                      const allowedKeys = [
-                        'Backspace',
-                        'Tab',
-                        'ArrowLeft',
-                        'ArrowRight',
-                        'Delete',
-                        'Shift',
-                        ' ',
-                      ];
-                      const isLetter = /^[a-zA-Z]$/.test(e.key);
-                      if (!isLetter && !allowedKeys.includes(e.key))
-                        e.preventDefault();
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#D6A767] focus:border-[#D6A767]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     placeholder={
                       field === 'first_Name' ? 'First name' : 'Last name'
                     }
@@ -186,80 +296,79 @@ export default function SignUp() {
               ))}
             </div>
 
-            {[
-              {
-                name: 'enrollment_id',
-                label: 'Enrollment Number *',
-                type: 'text',
-              },
-              { name: 'email', label: 'Email Address *', type: 'email' },
-              { name: 'mobile_Number', label: 'Mobile Number *', type: 'text' },
-            ].map(({ name, label, type }) => (
-              <div key={name}>
-                <div className="flex items-center space-x-1.5 mb-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    {label}
-                  </label>
-                  {name === 'enrollment_id' && (
-                    <div className="relative group flex items-center">
-                      <Info className="h-4 w-4 text-gray-400" />
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max px-2 py-1 bg-gray-900 text-white text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                        This will be your username for login.
-                      </div>
-                    </div>
-                  )}
-                </div>
+            {['enrollment_id', 'email', 'mobile_Number'].map((field) => (
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {field === 'enrollment_id'
+                    ? 'Enrollment Number *'
+                    : field === 'email'
+                      ? 'Email *'
+                      : 'Mobile Number *'}
+                </label>
                 <input
-                  name={name}
-                  type={type}
-                  // FIX: Assert value as string to resolve type conflict.
-                  value={formData[name as keyof typeof formData] as string}
+                  name={field}
+                  type="text"
+                  value={formData[field as keyof typeof formData] as string}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#D6A767] focus:border-[#D6A767]"
-                  placeholder={`Enter your ${label.replace('*', '').trim()}`}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder={`Enter your ${field.replace('_', ' ')}`}
                 />
-                {errors[name] && (
-                  <p className="text-red-500 text-xs mt-1">{errors[name]}</p>
+                {errors[field] && (
+                  <p className="text-red-500 text-xs mt-1">{errors[field]}</p>
                 )}
               </div>
             ))}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Select Cities *
+                Cities *
               </label>
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setCityDropdownOpen(!cityDropdownOpen)}
-                  className="w-full text-left px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white"
-                >
-                  {formData.city.length > 0
-                    ? formData.city.join(', ')
-                    : 'Select cities'}
-                </button>
-                {cityDropdownOpen && (
-                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto">
-                    {cities.map((city) => (
-                      <label
-                        key={city}
-                        className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          className="mr-2 h-4 w-4 text-[#D6A767] focus:ring-[#C19653] border-gray-300 rounded"
-                          value={city}
-                          checked={formData.city.includes(city)}
-                          onChange={() => handleCityCheckboxChange(city)}
-                        />
-                        {city}
-                      </label>
-                    ))}
-                  </div>
+              <Select
+                isMulti
+                name="city"
+                options={cities}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                value={cities.filter((option) =>
+                  formData.city.includes(option.value),
                 )}
-              </div>
+                onChange={(selectedOptions) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    city: selectedOptions.map((option) => option.value),
+                  }));
+                }}
+              />
               {errors.city && (
                 <p className="text-red-500 text-xs mt-1">{errors.city}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Areas of Expertise *
+              </label>
+              <Select
+                isMulti
+                name="area_of_expertise"
+                options={specializations}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                value={specializations.filter((option) =>
+                  formData.area_of_expertise?.includes(option.value),
+                )}
+                onChange={(selectedOptions) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    area_of_expertise: selectedOptions.map(
+                      (option) => option.value,
+                    ),
+                  }));
+                }}
+              />
+              {errors.area_of_expertise && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.area_of_expertise}
+                </p>
               )}
             </div>
 
@@ -267,16 +376,16 @@ export default function SignUp() {
               {
                 name: 'password_hash',
                 label: 'Password *',
-                show: showPassword,
-                toggle: setShowPassword,
+                visible: showPassword,
+                setVisible: setShowPassword,
               },
               {
                 name: 'confirmPassword',
                 label: 'Confirm Password *',
-                show: showConfirmPassword,
-                toggle: setShowConfirmPassword,
+                visible: showConfirmPassword,
+                setVisible: setShowConfirmPassword,
               },
-            ].map(({ name, label, show, toggle }) => (
+            ].map(({ name, label, visible, setVisible }) => (
               <div key={name}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {label}
@@ -284,23 +393,18 @@ export default function SignUp() {
                 <div className="relative">
                   <input
                     name={name}
-                    type={show ? 'text' : 'password'}
-                    // FIX: Assert value as string to resolve type conflict.
+                    type={visible ? 'text' : 'password'}
                     value={formData[name as keyof typeof formData] as string}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#D6A767] focus:border-[#D6A767] pr-12"
-                    placeholder={`Enter ${label.replace('*', '').trim()}`}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder={`Enter ${label}`}
                   />
                   <button
                     type="button"
-                    onClick={() => toggle(!show)}
-                    className="absolute inset-y-0 right-0 px-4 flex items-center text-gray-500"
+                    onClick={() => setVisible(!visible)}
+                    className="absolute right-3 top-2"
                   >
-                    {show ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
+                    {visible ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
                 {errors[name] && (
@@ -316,24 +420,18 @@ export default function SignUp() {
                 type="checkbox"
                 checked={formData.termsAccepted}
                 onChange={handleChange}
-                className="h-4 w-4 text-[#D6A767] focus:ring-[#D6A767] border-gray-300 rounded"
+                className="h-4 w-4 text-[#D6A767] border-gray-300 rounded"
               />
               <label
                 htmlFor="termsAccepted"
                 className="ml-2 text-sm text-gray-700"
               >
                 I agree to the{' '}
-                <Link
-                  href="/terms"
-                  className="text-[#D6A767] hover:text-[#C19653]"
-                >
+                <Link href="/terms" className="text-[#D6A767] underline">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link
-                  href="/privacy"
-                  className="text-[#D6A767] hover:text-[#C19653]"
-                >
+                <Link href="/privacy" className="text-[#D6A767] underline">
                   Privacy Policy
                 </Link>
               </label>
@@ -346,23 +444,11 @@ export default function SignUp() {
 
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#D6A767] hover:bg-[#C19653] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C19653]"
+              className="w-full py-3 px-4 bg-[#D6A767] text-white rounded-md"
             >
               {isLoading ? 'Registering...' : 'Register as Lawyer'}
             </button>
           </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Already have an account?{' '}
-              <Link
-                href="/login"
-                className="text-[#D6A767] hover:text-[#C19653] font-semibold"
-              >
-                Sign in
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
       <Toaster position="top-center" />

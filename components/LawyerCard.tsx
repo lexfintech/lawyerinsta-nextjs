@@ -60,12 +60,7 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
 
         {/* Rating & Cases */}
         <div className="text-right flex flex-col items-end justify-start">
-          <div className="flex items-center space-x-1">
-            <Star className="h-4 w-4 text-yellow-400 fill-current" />
-            <p className="text-xs text-gray-500">
-              {lawyer.cases_completed} cases
-            </p>
-          </div>
+          <div className="flex items-center space-x-1"></div>
         </div>
       </div>
 
