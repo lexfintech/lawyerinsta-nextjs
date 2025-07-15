@@ -84,8 +84,8 @@ export default function LawyerProfileView() {
                 </div>
                 <div className="flex items-center space-x-4 mb-2 text-gray-600">
                   <div className="flex items-center space-x-1">
-                    <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                    <div>{lawyerData.cases_completed || 0} cases</div>
+                    {/* <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                    <div>{lawyerData.cases_completed || 0} cases</div> */}
                   </div>
                 </div>
               </div>
@@ -168,7 +168,7 @@ export default function LawyerProfileView() {
               {lawyerData.education || 'N/A'}
             </p>
             <p>
-              <span className="font-semibold">Languages Spoken</span>
+              <span className="font-semibold">Languages Known</span>
               <br />
               {displayLanguages}
             </p>

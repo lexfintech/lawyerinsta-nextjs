@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, MapPin, Award, Loader } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Loader } from 'lucide-react';
+import Select, { SingleValue } from 'react-select';
 import LawyerCard from '@/components/LawyerCard';
 import { toast } from 'sonner';
 
-type Lawyerdata = {
+// Types
+type OptionType = { value: string; label: string };
+
+type LawyerData = {
   enrollment_id: string;
   first_Name: string;
   last_Name: string;
@@ -26,72 +30,172 @@ type Lawyerdata = {
   practice_start_year: number;
 };
 
-type Specialization =
-  | 'Criminal Law'
-  | 'Corporate Law'
-  | 'Art Law'
-  | 'Animal Law'
-  | 'Banking & Finance Law'
-  | 'Business Law'
-  | 'Cyber Law';
+// Specializations
+const specializations: OptionType[] = [
+  'Admiralty Law',
+  'Animal Law',
+  'Arbitration Law',
+  'Armed Force Law',
+  'Art Law',
+  'Artificial Intelligence',
+  'Asset Management',
+  'Aviation Law',
+  'Banking law',
+  'Bankruptcy & Insolvency (IBC)',
+  'Business Law',
+  'Capital Markets',
+  'Civil litigation',
+  'Commercial litigation',
+  'Company law',
+  'Competition & Anti-trust law',
+  'Constitutional Law',
+  'Consumer law',
+  'Contracts',
+  'Conveyance',
+  'Copyright law',
+  'Corporate secretarial',
+  'Criminal law',
+  'Cross Border Transaction',
+  'Customs',
+  'Cyber law',
+  'Data Privacy & Protection',
+  'Debt Recovery',
+  'Dispute Resolution',
+  'Divorce',
+  "Director's disputes",
+  'Domestic & Foreign Investment',
+  'Due Diligience',
+  'Economic offences',
+  'Electricity law',
+  'Employment law',
+  'Energy law',
+  'Entertainment law',
+  'Enviornment law',
+  'Equity & Capital restructuring',
+  'Family law',
+  'Fashion law',
+  'Funding Advisory',
+  'Gaming law',
+  'Healthcare law',
+  'Human RIghts law',
+  'Immigration law',
+].map((label) => ({ value: label, label }));
 
-const cities = [
-  'Delhi',
+// Cities
+const cities: OptionType[] = [
   'Mumbai',
-  'Bangalore',
+  'Delhi',
+  'Bengaluru',
+  'Hyderabad',
+  'Ahmedabad',
   'Chennai',
   'Kolkata',
-  'Hyderabad',
   'Pune',
-  'Ahmedabad',
   'Jaipur',
   'Lucknow',
   'Kanpur',
   'Nagpur',
-];
-
-const specializations: { value: Specialization; label: string }[] = [
-  { value: 'Criminal Law', label: 'Criminal Law' },
-  { value: 'Corporate Law', label: 'Corporate Law' },
-  { value: 'Art Law', label: 'Art Law' },
-  { value: 'Animal Law', label: 'Animal Law' },
-  { value: 'Banking & Finance Law', label: 'Banking & Finance Law' },
-  { value: 'Business Law', label: 'Business Law' },
-  { value: 'Cyber Law', label: 'Cyber Law' },
-];
+  'Indore',
+  'Thane',
+  'Bhopal',
+  'Visakhapatnam',
+  'Patna',
+  'Vadodara',
+  'Ghaziabad',
+  'Ludhiana',
+  'Agra',
+  'Nashik',
+  'Faridabad',
+  'Meerut',
+  'Rajkot',
+  'Kalyan-Dombivli',
+  'Vasai-Virar',
+  'Varanasi',
+  'Srinagar',
+  'Aurangabad',
+  'Dhanbad',
+  'Amritsar',
+  'Navi Mumbai',
+  'Allahabad (Prayagraj)',
+  'Ranchi',
+  'Howrah',
+  'Coimbatore',
+  'Jabalpur',
+  'Gwalior',
+  'Vijayawada',
+  'Jodhpur',
+  'Madurai',
+  'Raipur',
+  'Kota',
+  'Guwahati',
+  'Chandigarh',
+  'Solapur',
+  'Hubli-Dharwad',
+  'Bareilly',
+  'Mysuru',
+  'Tiruchirappalli',
+  'Moradabad',
+  'Tiruppur',
+  'Salem',
+  'Bhilai',
+  'Guntur',
+  'Bhiwandi',
+  'Saharanpur',
+  'Gorakhpur',
+  'Bikaner',
+  'Amravati',
+  'Noida',
+  'Jamshedpur',
+  'Bhilwara',
+  'Warangal',
+  'Cuttack',
+  'Firozabad',
+  'Udaipur',
+  'Ajmer',
+  'Bilaspur',
+  'Panipat',
+  'Aizawl',
+  'Silchar',
+  'Puducherry',
+  'Shimla',
+  'Itanagar',
+  'Shillong',
+  'Kohima',
+  'Gangtok',
+  'Imphal',
+  'Agartala',
+  'Dehradun',
+  'Muzaffarpur',
+  'Haridwar',
+  'Mathura',
+  'Aligarh',
+  'Satna',
+  'Rewa',
+  'Nanded',
+  'Latur',
+  'Erode',
+  'Tirunelveli',
+  'Karimnagar',
+  'Nizamabad',
+  'Kolhapur',
+  'Ichalkaranji',
+  'Davangere',
+  'Ujjain',
+  'Jhansi',
+  'Tumkur',
+  'Mangalore',
+  'Bellary',
+  'Ratlam',
+  'Kakinada',
+].map((label) => ({ value: label, label }));
 
 export default function FindLawyer() {
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedSpecialization, setSelectedSpecialization] = useState('');
-  const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
-  const [specSuggestions, setSpecSuggestions] = useState<string[]>([]);
-  const [searchResults, setSearchResults] = useState<Lawyerdata[]>([]);
+  const [selectedCity, setSelectedCity] = useState<OptionType | null>(null);
+  const [selectedSpecialization, setSelectedSpecialization] =
+    useState<OptionType | null>(null);
+  const [searchResults, setSearchResults] = useState<LawyerData[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-
-  useEffect(() => {
-    setCitySuggestions(
-      selectedCity
-        ? cities.filter((c) =>
-            c.toLowerCase().includes(selectedCity.toLowerCase()),
-          )
-        : [],
-    );
-  }, [selectedCity]);
-
-  useEffect(() => {
-    setSpecSuggestions(
-      selectedSpecialization
-        ? specializations
-            .filter((s) =>
-              s.label
-                .toLowerCase()
-                .includes(selectedSpecialization.toLowerCase()),
-            )
-            .map((s) => s.label)
-        : [],
-    );
-  }, [selectedSpecialization]);
 
   const handleSearch = async () => {
     if (!selectedCity || !selectedSpecialization) {
@@ -105,12 +209,10 @@ export default function FindLawyer() {
     try {
       const res = await fetch('/api/find-lawyer', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          city: selectedCity,
-          area_of_expertise: selectedSpecialization,
+          city: selectedCity.value,
+          area_of_expertise: selectedSpecialization.value,
         }),
       });
 
@@ -121,82 +223,39 @@ export default function FindLawyer() {
       }
     } catch (err) {
       console.error('Error fetching lawyer data:', err);
+      toast.error('Something went wrong');
     } finally {
       setIsSearching(false);
     }
   };
 
-  const sortedLawyers = [...searchResults].sort((a, b) => {
-    return (b.is_premium ? 1 : 0) - (a.is_premium ? 1 : 0);
-  });
+  const sortedLawyers = [...searchResults].sort(
+    (a, b) => (b.is_premium ? 1 : 0) - (a.is_premium ? 1 : 0),
+  );
 
   return (
     <div className="min-h-screen">
-      <section className="bg-[#E6D0B1] py-20">
-        <div className="max-w-7xl mx-auto px-4 text-center">
+      <section className="bg-[#E6D0B1] py-20 sticky top-0 z-10">
+        <div className="w-[80%] mx-auto px-4 text-center max-w-none">
           <h1 className="text-5xl font-bold text-black mb-6">Find a Lawyer</h1>
           <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
             Search through 20+ lakh verified lawyers across India.
           </p>
 
           <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                  placeholder="Enter City"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767]"
-                />
-                {citySuggestions.length > 0 && (
-                  <ul className="absolute z-10 bg-white border rounded shadow w-full mt-1 max-h-40 overflow-y-auto">
-                    {citySuggestions.map((city, idx) => (
-                      <li
-                        key={idx}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          setSelectedCity(city);
-                          setCitySuggestions([]);
-                        }}
-                        className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      >
-                        {city}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-              <div className="relative">
-                <Award className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  value={selectedSpecialization}
-                  onChange={(e) => setSelectedSpecialization(e.target.value)}
-                  placeholder="Enter Specialization"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767]"
-                />
-                {specSuggestions.length > 0 && (
-                  <ul className="absolute z-10 bg-white border rounded shadow w-full mt-1 max-h-40 overflow-y-auto">
-                    {specSuggestions.map((spec, idx) => (
-                      <li
-                        key={idx}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          setSelectedSpecialization(spec);
-                          setSpecSuggestions([]);
-                        }}
-                        className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      >
-                        {spec}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Select
+                options={cities}
+                value={selectedCity}
+                onChange={(option) => setSelectedCity(option)}
+                placeholder="Select City"
+              />
+              <Select
+                options={specializations}
+                value={selectedSpecialization}
+                onChange={(option) => setSelectedSpecialization(option)}
+                placeholder="Select Specialization"
+              />
               <button
                 onClick={handleSearch}
                 className="btn-primary flex items-center justify-center space-x-2"
@@ -223,17 +282,17 @@ export default function FindLawyer() {
                 {searchResults.length} Lawyers Found
               </h2>
               <p className="text-gray-600">
-                Showing {selectedSpecialization} specialists
-                {selectedCity && ` in ${selectedCity}`}
+                Showing {selectedSpecialization?.label} specialists
+                {selectedCity?.label && ` in ${selectedCity.label}`}
               </p>
             </div>
-            <div className="flex flex-wrap gap-6 justify-center mb-8">
+            <div className="flex flex-wrap gap-4 justify-center mb-8">
               {sortedLawyers.map((lawyer, index) => (
                 <LawyerCard
                   key={index}
                   lawyer={lawyer}
-                  specialization={selectedSpecialization}
-                  city={selectedCity}
+                  specialization={selectedSpecialization?.label || ''}
+                  city={selectedCity?.label || ''}
                 />
               ))}
             </div>
