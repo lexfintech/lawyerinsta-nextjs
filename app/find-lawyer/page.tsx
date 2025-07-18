@@ -40,45 +40,45 @@ const specializations: OptionType[] = [
   'Artificial Intelligence',
   'Asset Management',
   'Aviation Law',
-  'Banking law',
+  'Banking Law',
   'Bankruptcy & Insolvency (IBC)',
   'Business Law',
   'Capital Markets',
-  'Civil litigation',
-  'Commercial litigation',
-  'Company law',
+  'Civil Litigation',
+  'Commercial Litigation',
+  'Company Law',
   'Competition & Anti-trust law',
   'Constitutional Law',
-  'Consumer law',
+  'Consumer Law',
   'Contracts',
   'Conveyance',
-  'Copyright law',
+  'Copyright Law',
   'Corporate secretarial',
-  'Criminal law',
+  'Criminal Law',
   'Cross Border Transaction',
   'Customs',
-  'Cyber law',
+  'Cyber Law',
   'Data Privacy & Protection',
   'Debt Recovery',
   'Dispute Resolution',
   'Divorce',
-  "Director's disputes",
+  "Director's Disputes",
   'Domestic & Foreign Investment',
-  'Due Diligience',
-  'Economic offences',
-  'Electricity law',
-  'Employment law',
-  'Energy law',
-  'Entertainment law',
-  'Enviornment law',
-  'Equity & Capital restructuring',
-  'Family law',
-  'Fashion law',
+  'Due Diligence',
+  'Economic Offences',
+  'Electricity Law',
+  'Employment Law',
+  'Energy Law',
+  'Entertainment Law',
+  'Environment Law',
+  'Equity & Capital Restructuring',
+  'Family Law',
+  'Fashion Law',
   'Funding Advisory',
-  'Gaming law',
-  'Healthcare law',
-  'Human RIghts law',
-  'Immigration law',
+  'Gaming Law',
+  'Healthcare Law',
+  'Human Rights Law',
+  'Immigration Law',
 ].map((label) => ({ value: label, label }));
 
 // Cities
@@ -198,8 +198,8 @@ export default function FindLawyer() {
   const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = async () => {
-    if (!selectedCity || !selectedSpecialization) {
-      toast.error('Please enter both City and Specialization');
+    if (!selectedCity) {
+      toast.error('Please select the City.');
       return;
     }
 
@@ -212,7 +212,6 @@ export default function FindLawyer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           city: selectedCity.value,
-          area_of_expertise: selectedSpecialization.value,
         }),
       });
 
@@ -235,27 +234,27 @@ export default function FindLawyer() {
 
   return (
     <div className="min-h-screen">
-      <section className="bg-[#E6D0B1] py-20 sticky top-0 z-10">
+      <section className="bg-[#E6D0B1] py-10 ">
         <div className="w-[80%] mx-auto px-4 text-center max-w-none">
           <h1 className="text-5xl font-bold text-black mb-6">Find a Lawyer</h1>
-          <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
+          {/* <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
             Search through 20+ lakh verified lawyers across India.
-          </p>
+          </p> */}
 
           <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Select
                 options={cities}
                 value={selectedCity}
                 onChange={(option) => setSelectedCity(option)}
                 placeholder="Select City"
               />
-              <Select
+              {/* <Select
                 options={specializations}
                 value={selectedSpecialization}
                 onChange={(option) => setSelectedSpecialization(option)}
                 placeholder="Select Specialization"
-              />
+              /> */}
               <button
                 onClick={handleSearch}
                 className="btn-primary flex items-center justify-center space-x-2"
@@ -276,17 +275,17 @@ export default function FindLawyer() {
 
       {hasSearched && !isSearching && (
         <section className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4">
+          <div className="max-w-none w-[90%] mx-auto px-4">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-black mb-4">
-                {searchResults.length} Lawyers Found
+                {searchResults.length} lawyers found in {selectedCity?.label}
               </h2>
-              <p className="text-gray-600">
+              {/* <p className="text-gray-600">
                 Showing {selectedSpecialization?.label} specialists
                 {selectedCity?.label && ` in ${selectedCity.label}`}
-              </p>
+              </p> */}
             </div>
-            <div className="flex flex-wrap gap-4 justify-center mb-8">
+            <div className="flex flex-wrap gap-8 justify-center mb-8">
               {sortedLawyers.map((lawyer, index) => (
                 <LawyerCard
                   key={index}

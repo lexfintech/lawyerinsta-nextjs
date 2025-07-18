@@ -86,15 +86,7 @@ export default function Footer() {
                   Info@lawyerinsta.com
                 </a>
               </div>
-              <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-[#D9A865]" />
-                <a
-                  href="tel:+919582723995"
-                  className="text-[#D6A767] hover:text-[#D9A865] transition-colors"
-                >
-                  +91 95827 23995
-                </a>
-              </div>
+              
             </div>
           </div>
         </div>
