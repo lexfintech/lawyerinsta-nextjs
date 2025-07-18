@@ -12,8 +12,11 @@ import {
   GraduationCap,
   VideoIcon,
 } from 'lucide-react';
-import { InstagramLogoIcon, LinkedInLogoIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
-
+import {
+  InstagramLogoIcon,
+  LinkedInLogoIcon,
+  TwitterLogoIcon,
+} from '@radix-ui/react-icons';
 
 import Image from 'next/image';
 
@@ -35,26 +38,64 @@ const availableLanguages = [
 
 const availableCities = [
   'Delhi',
-  'Bengaluru',
+  'Bangalore',
   'Ahmedabad',
   'Chennai',
   'Pune',
   'Kochi',
-  'Gurguram'
+  'Gurguram',
+  'Hyderabad',
 ];
 
 const expertiseOptions = [
-  { value: 'Criminal Law', label: 'Criminal Law' },
-  { value: 'Corporate Law', label: 'Corporate Law' },
-  { value: 'Art Law', label: 'Art Law' },
-  { value: 'Animal Law', label: 'Animal Law' },
-  { value: 'Banking & Finance Law', label: 'Banking & Finance Law' },
-  { value: 'Business Law', label: 'Business Law' },
-  { value: 'Cyber Law', label: 'Cyber Law' },
-  { value: 'Family Law', label: 'Family Law' },
-  { value: 'Property Law', label: 'Property Law' },
-  { value: 'Labor Law', label: 'Labor Law' },
-];
+  'Admiralty Law',
+  'Animal Law',
+  'Arbitration Law',
+  'Armed Force Law',
+  'Art Law',
+  'Artificial Intelligence',
+  'Asset Management',
+  'Aviation Law',
+  'Banking Law',
+  'Bankruptcy & Insolvency (IBC)',
+  'Business Law',
+  'Capital Markets',
+  'Civil Litigation',
+  'Commercial Litigation',
+  'Company Law',
+  'Competition & Anti-trust law',
+  'Constitutional Law',
+  'Consumer Law',
+  'Contracts',
+  'Conveyance',
+  'Copyright Law',
+  'Corporate secretarial',
+  'Criminal Law',
+  'Cross Border Transaction',
+  'Customs',
+  'Cyber Law',
+  'Data Privacy & Protection',
+  'Debt Recovery',
+  'Dispute Resolution',
+  'Divorce',
+  "Director's Disputes",
+  'Domestic & Foreign Investment',
+  'Due Diligence',
+  'Economic Offences',
+  'Electricity Law',
+  'Employment Law',
+  'Energy Law',
+  'Entertainment Law',
+  'Environment Law',
+  'Equity & Capital Restructuring',
+  'Family Law',
+  'Fashion Law',
+  'Funding Advisory',
+  'Gaming Law',
+  'Healthcare Law',
+  'Human Rights Law',
+  'Immigration Law',
+].map((label) => ({ value: label, label }));
 
 // --- TYPE DEFINITION ---
 type LawyerData = {
@@ -197,16 +238,15 @@ export default function LawyerProfile() {
     return undefined;
   };
 
- const calculateExperience = (startYear?: number): number => {
-  if (!startYear || isNaN(startYear)) return 0;
+  const calculateExperience = (startYear?: number): number => {
+    if (!startYear || isNaN(startYear)) return 0;
 
-  const currentYear = new Date().getFullYear();
+    const currentYear = new Date().getFullYear();
 
-  if (startYear > currentYear) return 0;
+    if (startYear > currentYear) return 0;
 
-  return currentYear - startYear; // Handles all valid cases, including when startYear === currentYear
-};
-
+    return currentYear - startYear; // Handles all valid cases, including when startYear === currentYear
+  };
 
   const handleEdit = () => {
     const convertToArray = (fieldData: any): string[] =>
@@ -362,15 +402,29 @@ export default function LawyerProfile() {
   );
   const displayExperience = calculateExperience(displayedPracticeStartYear);
 
+  const slideshowImages = [
+    '/assets/images/slide1.jpg',
+    '/assets/images/slide2.jpg',
+    '/assets/images/slide3.jpg',
+  ];
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slideshowImages.length);
+    }, 3000); // Change slide every 3 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="relative h-64 bg-gradient-to-r from-[#3C222F] to-[#D6A767]">
-      
-          <img
+        <img
           src={
             isEditing
               ? editData.cover_picture_url
-              : lawyerData.cover_picture_url 
+              : lawyerData.cover_picture_url
           }
           alt="Cover"
           className="w-full h-full object-cover"
@@ -391,11 +445,11 @@ export default function LawyerProfile() {
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
               <div className="relative">
-                 <img
+                <img
                   src={
                     isEditing
                       ? editData.profile_picture_url
-                      : lawyerData.profile_picture_url 
+                      : lawyerData.profile_picture_url
                   }
                   alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
@@ -432,7 +486,7 @@ export default function LawyerProfile() {
                     </div>
                   ) : (
                     <h1 className="text-3xl font-bold text-black">
-                      {lawyerData.first_Name} {lawyerData.last_Name}
+                      {lawyerData.first_Name} {lawyerData?.last_Name}
                     </h1>
                   )}
                   {lawyerData.is_premium && (
@@ -443,7 +497,9 @@ export default function LawyerProfile() {
                   <div className="flex items-center space-x-1">
                     {/* <Star className="h-5 w-5 text-yellow-400 fill-current" />
                      <div>{lawyerData.cases_completed} cases</div> */}
-                    <span className='card-label'>{displayExpertise.split(',').slice(0, 3).join(', ')}</span>
+                    <span className="card-label">
+                      {displayExpertise.split(',').slice(0, 3).join(', ')}
+                    </span>
                   </div>
                   {/* <div className='flex items-center space-x-1'>
                     <LinkedInLogoIcon className="h-5 w-5 text-[#0077B5] cursor-pointer" />
@@ -476,73 +532,91 @@ export default function LawyerProfile() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 px-4">
-  {/* Top Row: About Me & Intro Video */}
-  {lawyerData.is_premium ? ( <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
-    {/* About Me - 65% */}
-    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[60%] flex flex-col justify-between">
-      <h2 className="card-title">About Me</h2>
-      <div className="mt-1 h-full">
-        {isEditing ? (
-         <>
-           <textarea
-            name="bio"
-            value={editData.bio || ''}
-            onChange={(e) =>
-              handleInputChange(e.target.name, e.target.value)
-            }
-            className="input-field w-full h-[90%] resize-none"
-            rows={5}
-            placeholder="Write a brief bio about yourself..."
-            maxLength={500}
-          />
-          <p className="text-sm text-gray-500 mt-2">
-  {editData.bio?.length || 0}/500 characters
-</p>
-         </>
-        ) : (
-          <p className="text-gray-700 leading-relaxed h-full">
-            {lawyerData.bio || "No bio available..."}
-          </p>
-        )}
-      </div>
-    </div>
-
-    {/* Intro Video - 35% */}
-    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[40%] flex flex-col justify-between text-center">
-      <h2 className="card-title text-xl font-semibold">
-        <VideoIcon className="inline-block mr-2" /> Introduction Video
-      </h2>
-      <iframe
-        className="w-full h-[200px] md:h-[200px] lg:h-[200px] rounded-md mt-4"
-        src="https://www.youtube.com/embed/YanmpP6e69I"
-        title="Dr Moksha Kalyanram Abhiramula | Specialised in Corporate, Tax, IPR, ADR, M &amp; A | TEDx Speaker"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-      ></iframe>
-    </div>
-  </div>) : ( "" )}
-
-  {/* Bottom Row: Three Cards */}
-  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-    <h2 className="card-title">
-      <User /> Contact Information
-    </h2>
-     <div>
-              <h3 className="card-label">Enrollment Number</h3>
-              {isEditing ? (
-                <input
-                  name="enrollment_id"
-                  value={editData.enrollment_id || ''}
-                  readOnly
-                  onChange={(e) =>
-                    handleInputChange(e.target.name, e.target.value)
-                  }
-                  className="input-field bg-gray-100 cursor-not-allowed"
-                />
-              ) : (
-                <p className="card-value">{lawyerData.enrollment_id}</p>
-              )}
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[100%] flex flex-col justify-between">
+              <h2 className="card-title">About Me</h2>
+              <div className="mt-1 h-full">
+                {isEditing ? (
+                  <>
+                    <textarea
+                      name="bio"
+                      value={editData.bio || ''}
+                      onChange={(e) =>
+                        handleInputChange(e.target.name, e.target.value)
+                      }
+                      className="input-field w-full h-[90%] resize-none"
+                      rows={5}
+                      placeholder="Write a brief bio about yourself..."
+                      maxLength={500}
+                    />
+                    <p className="text-sm text-gray-500 mt-2">
+                      {editData.bio?.length || 0}/500 characters
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-gray-700 leading-relaxed h-full">
+                    {lawyerData.bio || 'No bio available...'}
+                  </p>
+                )}
+              </div>
             </div>
+          </div>
+          {/* Top Row: About Me & Intro Video */}
+          {lawyerData.is_premium ? (
+            <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
+              {/* About Me - 65% */}
+              <div className="relative w-full h-64 overflow-hidden rounded-xl">
+                <Image
+                  src={slideshowImages[currentSlide]}
+                  alt={`Slide ${currentSlide + 1}`}
+                  layout="fill"
+                  objectFit="fit"
+                  className="transition-opacity duration-700 ease-in-out"
+                />
+
+                {/* Navigation Buttons */}
+                <div className="absolute inset-0 flex justify-between items-center px-4">
+                  <button
+                    onClick={() =>
+                      setCurrentSlide((prev) =>
+                        prev === 0 ? slideshowImages.length - 1 : prev - 1,
+                      )
+                    }
+                    className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    onClick={() =>
+                      setCurrentSlide(
+                        (prev) => (prev + 1) % slideshowImages.length,
+                      )
+                    }
+                    className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+
+              {/* Intro Video - 35% */}
+              <iframe
+                className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1"
+                src="https://www.youtube.com/embed/CkiX-k-COJY"
+                title="Dr Moksha Kalyanram Abhiramula | Specialised in Corporate, Tax, IPR, ADR, M &amp; A | TEDx Speaker"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              ></iframe>
+            </div>
+          ) : (
+            ''
+          )}
+
+          {/* Bottom Row: Three Cards */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+            <h2 className="card-title">
+              <User /> Contact Information
+            </h2>
             <div>
               <h3 className="card-label">Email Address</h3>
               {isEditing ? (
@@ -593,13 +667,29 @@ export default function LawyerProfile() {
                 <p className="card-value">{lawyerData.address}</p>
               )}
             </div>
-  </div>
+          </div>
 
-  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-    <h2 className="card-title">
-      <Briefcase /> Professional Details
-    </h2>
-    <div>
+          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+            <h2 className="card-title">
+              <Briefcase /> Professional Details
+            </h2>
+            <div>
+              <h3 className="card-label">Enrollment Number</h3>
+              {isEditing ? (
+                <input
+                  name="enrollment_id"
+                  value={editData.enrollment_id || ''}
+                  readOnly
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  className="input-field bg-gray-100 cursor-not-allowed"
+                />
+              ) : (
+                <p className="card-value">{lawyerData.enrollment_id}</p>
+              )}
+            </div>
+            <div>
               <h3 className="card-label">Other Practice Areas</h3>
               {isEditing ? (
                 <AutocompleteMultiSelect
@@ -619,19 +709,17 @@ export default function LawyerProfile() {
                 </p>
               )}
             </div>
-            <div>
+            {/* <div>
               <h3 className="card-label">Practice Start Year</h3>
               <p className="card-value bg-gray-100 rounded-md p-2">
                 {isEditing
                   ? editData.practice_start_year || 'N/A'
                   : displayedPracticeStartYear || 'N/A'}
               </p>
-            </div>
+            </div> */}
             <div>
               <h3 className="card-label">Years of Experience</h3>
-              <p className="card-value bg-gray-100 rounded-md p-2">
-                {isEditing ? editData.experience || 0 : displayExperience} years
-              </p>
+              <p className="card-value bg-gray-100 rounded-md p-2">20+ years</p>
             </div>
             <div>
               <h3 className="card-label">Cop registered bar association</h3>
@@ -648,13 +736,13 @@ export default function LawyerProfile() {
                 <p className="card-value">{lawyerData.court_practice}</p>
               )}
             </div>
-  </div>
+          </div>
 
-  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-    <h2 className="card-title">
-      <GraduationCap /> Additional Information
-    </h2>
-     <div>
+          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+            <h2 className="card-title">
+              <GraduationCap /> Additional Information
+            </h2>
+            <div>
               <h3 className="card-label">Cities of Practice</h3>
               {isEditing ? (
                 <AutocompleteMultiSelect
@@ -697,11 +785,8 @@ export default function LawyerProfile() {
                 <p className="card-value">{displayLanguages}</p>
               )}
             </div>
-  </div>
-</div>
-
-
-
+          </div>
+        </div>
       </div>
       <style jsx global>{`
         .btn-primary {

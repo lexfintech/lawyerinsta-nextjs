@@ -9,12 +9,13 @@ import Select from 'react-select';
 
 const cities = [
   'Delhi',
-  'Bengaluru',
+  'Bangalore',
   'Ahmedabad',
   'Chennai',
   'Pune',
   'Gurugram',
   'Kochi',
+  'Hyderabad',
 ].map((city) => ({ value: city, label: city }));
 
 const specializations = [
@@ -249,7 +250,7 @@ export default function SignUp() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Areas of Expertise *
+                Practice Areas *
               </label>
               <Select
                 isMulti

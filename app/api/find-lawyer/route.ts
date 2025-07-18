@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const { city } = body;
 
     // Validate
-    if (!city ) {
+    if (!city) {
       return NextResponse.json(
         { message: 'City is required.' },
         { status: 400 },

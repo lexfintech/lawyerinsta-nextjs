@@ -22,7 +22,7 @@ export interface ILawyer extends Document {
   profile_overview: string;
   profile_picture_url: string;
   cover_picture_url: string;
-  education: string;
+  education: string;  
   languages: string[];
   bio: string;
   state_id: number;
@@ -66,7 +66,7 @@ const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
       type: String,
       default: null,
     },
-        education: { type: String, default: null },
+    education: { type: String, default: null },
     languages: { type: [String], default: [] },
     bio: { type: String, default: null },
     state_id: { type: Number, default: null },

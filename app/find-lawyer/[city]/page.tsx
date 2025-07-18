@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Loader } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Search, Loader, ArrowUp } from 'lucide-react';
 import Select, { SingleValue } from 'react-select';
 import LawyerCard from '@/components/LawyerCard';
 import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
 
 // Types
 type OptionType = { value: string; label: string };
@@ -84,12 +85,13 @@ const specializations: OptionType[] = [
 // Cities
 const cities: OptionType[] = [
   'Delhi',
-  'Bengaluru',
+  'Bangalore',
   'Ahmedabad',
   'Chennai',
   'Pune',
   'Kochi',
-  'Gurguram'
+  'Gurugram',
+  'Hyderabad',
 ].map((label) => ({ value: label, label }));
 
 export default function FindLawyer() {
@@ -99,6 +101,43 @@ export default function FindLawyer() {
   const [searchResults, setSearchResults] = useState<LawyerData[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+
+  const params = useParams();
+  const cityName = params?.city;
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!cityName) return;
+
+    setIsSearching(true);
+    setHasSearched(false);
+
+    fetch('/api/find-lawyer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        city: cityName,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.data) {
+          setSearchResults(data.data);
+          setIsSearching(false);
+          setHasSearched(true);
+        }
+      })
+      .catch((err) => console.error('Failed to load lawyer data:', err));
+  }, []);
 
   const handleSearch = async () => {
     if (!selectedCity) {
@@ -135,6 +174,10 @@ export default function FindLawyer() {
     (a, b) => (b.is_premium ? 1 : 0) - (a.is_premium ? 1 : 0),
   );
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen">
       <section className="bg-[#E6D0B1] py-10 ">
@@ -150,7 +193,7 @@ export default function FindLawyer() {
                 options={cities}
                 value={selectedCity}
                 onChange={(option) => setSelectedCity(option)}
-                placeholder="Select City"
+                placeholder={cityName ? cityName : 'Select City'}
               />
               {/* <Select
                 options={specializations}
@@ -181,7 +224,8 @@ export default function FindLawyer() {
           <div className="max-w-none w-[90%] mx-auto px-4">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-black mb-4">
-                {searchResults.length} lawyers found in {selectedCity?.label}
+                {searchResults.length} lawyers found in{' '}
+                {selectedCity?.label || cityName}
               </h2>
               {/* <p className="text-gray-600">
                 Showing {selectedSpecialization?.label} specialists
@@ -194,7 +238,7 @@ export default function FindLawyer() {
                   key={index}
                   lawyer={lawyer}
                   specialization={selectedSpecialization?.label || ''}
-                  city={selectedCity?.label || ''}
+                  city={selectedCity?.label || cityName}
                 />
               ))}
             </div>
@@ -213,6 +257,15 @@ export default function FindLawyer() {
             </p>
           </div>
         </section>
+      )}
+
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 p-3 rounded-full bg-[#D6A767] text-white shadow-lg hover:bg-[#C29350] transition-all duration-300 z-50"
+        >
+          <ArrowUp />
+        </button>
       )}
     </div>
   );

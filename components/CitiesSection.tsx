@@ -2,14 +2,14 @@ import Link from 'next/link';
 import { MapPin } from 'lucide-react';
 
 const cities = [
-  { name: 'Delhi', lawyers: '25,000+' },
-  { name: 'Mumbai', lawyers: '22,000+' },
-  { name: 'Bangalore', lawyers: '18,000+' },
-  { name: 'Kolkata', lawyers: '15,000+' },
-  { name: 'Chennai', lawyers: '14,000+' },
-  { name: 'Hyderabad', lawyers: '12,000+' },
-  { name: 'Pune', lawyers: '10,000+' },
-  { name: 'Ahmedabad', lawyers: '8,000+' },
+  { name: 'Delhi', lawyers: '' },
+  { name: 'Kochi', lawyers: '' },
+  { name: 'Bangalore', lawyers: '' },
+  { name: 'Kolkata', lawyers: '' },
+  { name: 'Chennai', lawyers: '' },
+  { name: 'Hyderabad', lawyers: '' },
+  { name: 'Pune', lawyers: '' },
+  { name: 'Ahmedabad', lawyers: '' },
 ];
 
 export default function CitiesSection() {
@@ -30,7 +30,7 @@ export default function CitiesSection() {
           {cities.map((city, index) => (
             <Link
               key={index}
-              href={`/find-lawyer?city=${city.name.toLowerCase()}`}
+              href={`/find-lawyer/${city.name}`}
               className="group bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-[#D6A767] hover:shadow-lg transition-all duration-300"
             >
               <div className="text-center space-y-4">
