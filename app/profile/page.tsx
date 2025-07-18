@@ -3,12 +3,6 @@
 import { useEffect, useState, useRef } from 'react';
 import {
   User,
-  Mail,
-  Phone,
-  MapPin,
-  Award,
-  Calendar,
-  Star,
   Edit3,
   Save,
   X,
@@ -16,8 +10,12 @@ import {
   Crown,
   Briefcase,
   GraduationCap,
-  Scale,
+  VideoIcon,
 } from 'lucide-react';
+import { InstagramLogoIcon, LinkedInLogoIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
+
+
+import Image from 'next/image';
 
 // --- DATA LISTS ---
 const availableLanguages = [
@@ -140,6 +138,8 @@ const availableCities = [
   'Bellary',
   'Ratlam',
   'Kakinada',
+  'Kochi',
+  'Gurugram',
 ];
 
 const expertiseOptions = [
@@ -157,8 +157,8 @@ const expertiseOptions = [
 
 // --- TYPE DEFINITION ---
 type LawyerData = {
-  cases_completed: number;
-  court_practice: string;
+  cases_completed?: number;
+  court_practice?: string;
   first_Name?: string;
   last_Name?: string;
   email?: string;
@@ -296,13 +296,16 @@ export default function LawyerProfile() {
     return undefined;
   };
 
-  const calculateExperience = (startYear: number | undefined): number => {
-    if (!startYear || isNaN(startYear)) return 0;
-    const currentYear = new Date().getFullYear();
-    const start = Number(startYear);
-    if (start > currentYear) return 0;
-    return currentYear - start;
-  };
+ const calculateExperience = (startYear?: number): number => {
+  if (!startYear || isNaN(startYear)) return 0;
+
+  const currentYear = new Date().getFullYear();
+
+  if (startYear > currentYear) return 0;
+
+  return currentYear - startYear; // Handles all valid cases, including when startYear === currentYear
+};
+
 
   const handleEdit = () => {
     const convertToArray = (fieldData: any): string[] =>
@@ -461,15 +464,17 @@ export default function LawyerProfile() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="relative h-64 bg-gradient-to-r from-[#3C222F] to-[#D6A767]">
-        <img
+      
+          <img
           src={
             isEditing
               ? editData.cover_picture_url
-              : lawyerData.cover_picture_url
+              : lawyerData.cover_picture_url 
           }
           alt="Cover"
           className="w-full h-full object-cover"
         />
+
         {isEditing && (
           <button
             onClick={() => handleImageUpload('cover')}
@@ -485,11 +490,11 @@ export default function LawyerProfile() {
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
               <div className="relative">
-                <img
+                 <img
                   src={
                     isEditing
                       ? editData.profile_picture_url
-                      : lawyerData.profile_picture_url
+                      : lawyerData.profile_picture_url 
                   }
                   alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
@@ -506,7 +511,7 @@ export default function LawyerProfile() {
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-2">
                   {isEditing ? (
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 flex-wrap">
                       <input
                         value={editData.first_Name || ''}
                         onChange={(e) =>
@@ -533,11 +538,17 @@ export default function LawyerProfile() {
                     <Crown className="h-6 w-6 text-[#D6A767]" />
                   )}
                 </div>
-                <div className="flex items-center space-x-4 mb-4 text-gray-600">
+                <div className="flex flex-col items-start space-x-4 mb-4 text-gray-600">
                   <div className="flex items-center space-x-1">
                     {/* <Star className="h-5 w-5 text-yellow-400 fill-current" />
                      <div>{lawyerData.cases_completed} cases</div> */}
+                    <span className='card-label'>{displayExpertise.split(',').slice(0, 3).join(', ')}</span>
                   </div>
+                  {/* <div className='flex items-center space-x-1'>
+                    <LinkedInLogoIcon className="h-5 w-5 text-[#0077B5] cursor-pointer" />
+                    <InstagramLogoIcon className="h-5 w-5 text-[#E1306C] cursor-pointer" />
+                    <TwitterLogoIcon className="h-5 w-5 text-[#1DA1F2] cursor-pointer" />
+                  </div> */}
                 </div>
               </div>
               <div className="flex-shrink-0">
@@ -563,12 +574,59 @@ export default function LawyerProfile() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-            <h2 className="card-title">
-              <User /> Contact Information
-            </h2>
-            <div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 px-4">
+  {/* Top Row: About Me & Intro Video */}
+  {lawyerData.is_premium ? ( <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
+    {/* About Me - 65% */}
+    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[60%] flex flex-col justify-between">
+      <h2 className="card-title">About Me</h2>
+      <div className="mt-1 h-full">
+        {isEditing ? (
+         <>
+           <textarea
+            name="bio"
+            value={editData.bio || ''}
+            onChange={(e) =>
+              handleInputChange(e.target.name, e.target.value)
+            }
+            className="input-field w-full h-[90%] resize-none"
+            rows={5}
+            placeholder="Write a brief bio about yourself..."
+            maxLength={500}
+          />
+          <p className="text-sm text-gray-500 mt-2">
+  {editData.bio?.length || 0}/500 characters
+</p>
+         </>
+        ) : (
+          <p className="text-gray-700 leading-relaxed h-full">
+            {lawyerData.bio || "No bio available..."}
+          </p>
+        )}
+      </div>
+    </div>
+
+    {/* Intro Video - 35% */}
+    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[40%] flex flex-col justify-between text-center">
+      <h2 className="card-title text-xl font-semibold">
+        <VideoIcon className="inline-block mr-2" /> Introduction Video
+      </h2>
+      <iframe
+        className="w-full h-[200px] md:h-[200px] lg:h-[200px] rounded-md mt-4"
+        src="https://www.youtube.com/embed/YanmpP6e69I"
+        title="Dr Moksha Kalyanram Abhiramula | Specialised in Corporate, Tax, IPR, ADR, M &amp; A | TEDx Speaker"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+      ></iframe>
+    </div>
+  </div>) : ( "" )}
+
+  {/* Bottom Row: Three Cards */}
+  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+    <h2 className="card-title">
+      <User /> Contact Information
+    </h2>
+     <div>
               <h3 className="card-label">Enrollment Number</h3>
               {isEditing ? (
                 <input
@@ -617,7 +675,7 @@ export default function LawyerProfile() {
               )}
             </div>
             <div>
-              <h3 className="card-label">Full Address</h3>
+              <h3 className="card-label">Office Address</h3>
               {isEditing ? (
                 <textarea
                   name="address"
@@ -627,19 +685,21 @@ export default function LawyerProfile() {
                   }
                   className="input-field"
                   rows={3}
+                  placeholder="Enter your office address..."
+                  maxLength={250}
                 />
               ) : (
                 <p className="card-value">{lawyerData.address}</p>
               )}
             </div>
-          </div>
+  </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-            <h2 className="card-title">
-              <Briefcase /> Professional Details
-            </h2>
-            <div>
-              <h3 className="card-label">Area of Expertise</h3>
+  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+    <h2 className="card-title">
+      <Briefcase /> Professional Details
+    </h2>
+    <div>
+              <h3 className="card-label">Other Practice Areas</h3>
               {isEditing ? (
                 <AutocompleteMultiSelect
                   options={expertiseOptions}
@@ -673,7 +733,7 @@ export default function LawyerProfile() {
               </p>
             </div>
             <div>
-              <h3 className="card-label">Court of Practice</h3>
+              <h3 className="card-label">Cop registered bar association</h3>
               {isEditing ? (
                 <input
                   name="court_practice"
@@ -687,13 +747,13 @@ export default function LawyerProfile() {
                 <p className="card-value">{lawyerData.court_practice}</p>
               )}
             </div>
-          </div>
+  </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-            <h2 className="card-title">
-              <GraduationCap /> Additional Information
-            </h2>
-            <div>
+  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+    <h2 className="card-title">
+      <GraduationCap /> Additional Information
+    </h2>
+     <div>
               <h3 className="card-label">Cities of Practice</h3>
               {isEditing ? (
                 <AutocompleteMultiSelect
@@ -736,29 +796,11 @@ export default function LawyerProfile() {
                 <p className="card-value">{displayLanguages}</p>
               )}
             </div>
-          </div>
+  </div>
+</div>
 
-          <div className="lg:col-span-3 bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="card-title">About Me</h2>
-            <div className="mt-4">
-              {isEditing ? (
-                <textarea
-                  name="bio"
-                  value={editData.bio || ''}
-                  onChange={(e) =>
-                    handleInputChange(e.target.name, e.target.value)
-                  }
-                  className="input-field w-full"
-                  rows={5}
-                />
-              ) : (
-                <p className="text-gray-700 leading-relaxed">
-                  {lawyerData.bio}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+
+
       </div>
       <style jsx global>{`
         .btn-primary {

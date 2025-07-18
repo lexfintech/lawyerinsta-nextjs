@@ -8,12 +8,12 @@ export async function POST(req: NextRequest) {
   try {
     // Parse JSON body
     const body = await req.json();
-    const { city, area_of_expertise } = body;
+    const { city } = body;
 
     // Validate
-    if (!city || !area_of_expertise) {
+    if (!city ) {
       return NextResponse.json(
-        { message: 'City and area of expertise are required.' },
+        { message: 'City is required.' },
         { status: 400 },
       );
     }
@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
 
     const lawyers = await Lawyer.find({
       city: { $in: [city] },
-      area_of_expertise: { $in: [area_of_expertise] },
     }).select('-password_hash'); // exclude password_hash
 
     return NextResponse.json(

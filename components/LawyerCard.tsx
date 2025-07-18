@@ -1,7 +1,9 @@
 'use client';
 
 import { Crown, Star, Phone, Mail } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation'; // ✅ Use next/navigation for app directory
+import Profile from '../public/assets/images/profile.png'; // Default profile image
 
 type Lawyer = {
   mobile_Number: number;
@@ -26,8 +28,33 @@ type Props = {
 export default function LawyerCard({ lawyer, specialization, city }: Props) {
   const router = useRouter();
 
-  const calculateExperience = (startYear: number) =>
-    new Date().getFullYear() - startYear;
+  const getYearFromEnrollment = (
+    id: string | undefined,
+  ): number | undefined => {
+    if (!id || id.length < 4) return undefined;
+    const potentialYear = id.slice(-4);
+    if (!isNaN(Number(potentialYear))) {
+      const year = parseInt(potentialYear, 10);
+      if (year > 1950 && year <= new Date().getFullYear()) return year;
+    }
+    return undefined;
+  };
+
+   const calculateExperience = (startYear?: number): number => {
+  if (!startYear || isNaN(startYear)) return 0;
+
+  const currentYear = new Date().getFullYear();
+
+  if (startYear > currentYear) return 0;
+
+  return currentYear - startYear; // Handles all valid cases, including when startYear === currentYear
+};
+
+const displayedPracticeStartYear = getYearFromEnrollment(
+    lawyer.enrollment_id,
+  );
+
+  const displayExperience = calculateExperience(displayedPracticeStartYear);
 
   const handleShowProfile = () => {
     router.push(`/lawyer-profile/${lawyer.enrollment_id}`);
@@ -38,10 +65,12 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
       <div className="flex justify-between mb-4 gap-4">
         {/* Profile Image + Info */}
         <div className="flex gap-4 items-start">
-          <img
-            src={lawyer.profile_picture_url || '/default-profile.png'}
+          <Image
+            src={lawyer.profile_picture_url || Profile}
             alt="Lawyer"
             className="w-16 h-16 rounded-full object-cover border"
+            width={64}
+            height={64}
           />
           <div>
             <div className="flex items-center gap-2">
@@ -53,7 +82,7 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
               )}
             </div>
             <p className="text-sm text-gray-600">
-              {calculateExperience(lawyer.practice_start_year)} years experience
+              {`${displayExperience} Years Experience` || "N/A"}
             </p>
           </div>
         </div>
