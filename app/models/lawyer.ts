@@ -9,7 +9,7 @@ export interface ILawyer extends Document {
   mobile_Number: number;
   city: string[];
   WhatsApp_Number: number;
-  address: string,
+  address: string;
   intro_video_url: string;
   is_active: boolean;
   email_verified: boolean;
@@ -30,8 +30,9 @@ export interface ILawyer extends Document {
   is_premium: boolean;
   premium_expires_at: Date;
   area_of_expertise: string[];
-  cases_completed: number,
-  court_practice: string
+  cases_completed: number;
+  court_practice: string;
+  termsAccepted: boolean;
 }
 
 const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
@@ -56,15 +57,16 @@ const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
     practice_start_year: { type: Number, default: null },
     door_no: { type: String, default: null },
     profile_overview: { type: String, default: null },
+    termsAccepted: { type: Boolean, default: false },
     profile_picture_url: {
       type: String,
-      default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZnScE9YP90Vr-VuiOJww6kbvMmAIBgVHWwA&s'
+      default: null,
     },
     cover_picture_url: {
       type: String,
-      default: 'https://www.shutterstock.com/image-illustration/lawyer-office-judge-gavel-law-260nw-642994258.jpg'
-     },
-    education: { type: String, default: null },
+      default: null,
+    },
+        education: { type: String, default: null },
     languages: { type: [String], default: [] },
     bio: { type: String, default: null },
     state_id: { type: Number, default: null },
@@ -72,7 +74,7 @@ const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
     is_premium: { type: Boolean, default: false },
     premium_expires_at: { type: Date, default: null },
     cases_completed: { type: Number, default: 0 },
-    court_practice: {type: String, default: null}
+    court_practice: { type: String, default: null },
   },
   { timestamps: true }, // adds createdAt and updatedAt automatically
 );
