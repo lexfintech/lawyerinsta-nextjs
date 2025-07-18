@@ -447,7 +447,7 @@ export default function LawyerProfile() {
                     </div>
                   ) : (
                     <h1 className="text-3xl font-bold text-black">
-                      {lawyerData.first_Name} {lawyerData.last_Name}
+                      {lawyerData.first_Name} {lawyerData?.last_Name}
                     </h1>
                   )}
                   {lawyerData.is_premium && (
@@ -561,8 +561,8 @@ export default function LawyerProfile() {
               {/* Intro Video - 35% */}
               <iframe
                 className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1"
-                src="https://www.youtube.com/embed/hJdlhSy5bi0"
-                title="The RajaSaab Telugu Teaser | Prabhas | Maruthi | Thaman | TG Vishwa Prasad | Dec 5 2025"
+                src="https://www.youtube.com/embed/CkiX-k-COJY"
+                title="Dr Moksha Kalyanram Abhiramula | Specialised in Corporate, Tax, IPR, ADR, M &amp; A | TEDx Speaker"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               ></iframe>

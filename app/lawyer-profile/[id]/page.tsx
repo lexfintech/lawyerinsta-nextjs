@@ -65,10 +65,10 @@ export default function LawyerProfileView() {
   const displayExpertise =
     lawyerData.area_of_expertise
       ?.map((e: string) => getLabel(expertiseOptions, e))
-      .join(', ') || 'Not specified';
+      .join(', ') || '...';
 
-  const displayCities = lawyerData.city?.join(', ') || 'Not specified';
-  const displayLanguages = lawyerData.languages?.join(', ') || 'Not specified';
+  const displayCities = lawyerData.city?.join(', ') || '...';
+  const displayLanguages = lawyerData.languages?.join(', ') || '...';
 
   const displayedPracticeStartYear = getYearFromEnrollment(
     lawyerData.enrollment_id,
@@ -125,7 +125,7 @@ export default function LawyerProfileView() {
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-2">
                     <h1 className="text-3xl font-bold text-black">
-                      {lawyerData.first_Name} {lawyerData.last_Name}
+                      {lawyerData.first_Name} {lawyerData?.last_Name}
                     </h1>
                   {lawyerData.is_premium && (
                     <Crown className="h-6 w-6 text-[#D6A767]" />
@@ -193,8 +193,8 @@ export default function LawyerProfileView() {
                 {/* Intro Video - 35% */}
                 <iframe
                   className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1"
-                  src="https://www.youtube.com/embed/hJdlhSy5bi0"
-                  title="The RajaSaab Telugu Teaser | Prabhas | Maruthi | Thaman | TG Vishwa Prasad | Dec 5 2025"
+                  src="https://www.youtube.com/embed/CkiX-k-COJY"
+                  title="Dr Moksha Kalyanram Abhiramula | Specialised in Corporate, Tax, IPR, ADR, M &amp; A | TEDx Speaker"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                 ></iframe>
