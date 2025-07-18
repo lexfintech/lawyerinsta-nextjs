@@ -27,7 +27,7 @@ export default function Footer() {
             </h3>
             <div className="space-y-2 text-md">
               <Link
-                href="/find-lawyer"
+                href="/find-a-lawyer"
                 className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
               >
                 Find A Lawyer

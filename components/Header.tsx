@@ -19,7 +19,7 @@ export default function Header() {
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
-    { href: '/find-lawyer', label: 'Find a Lawyer' },
+    { href: '/find-a-lawyer', label: 'Find a Lawyer' },
   ];
 
   const handleLogout = async () => {
