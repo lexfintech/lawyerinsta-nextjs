@@ -83,11 +83,13 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
                 <Crown className="h-5 w-5 text-[#D6A767]" />
               )}
             </div>
-            {lawyer.is_premium ? ( <p className="text-sm text-gray-600">
-              20+ Years Experience
-            </p>) : (<p className="text-sm text-gray-600">
-              {`${displayExperience} Years Experience` || 'N/A'}
-            </p>)}
+            {lawyer.is_premium ? (
+              <p className="text-sm text-gray-600">20+ Years Experience</p>
+            ) : (
+              <p className="text-sm text-gray-600">
+                {`${displayExperience} Years Experience` || 'N/A'}
+              </p>
+            )}
           </div>
         </div>
 
@@ -109,17 +111,21 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
       </div>
 
       {/* Contact Actions */}
-      {lawyer.is_premium ? ( <div
-        className="flex space-x-2 mt-auto pt-2"
-        onClick={(e) => e.stopPropagation()} // ⛔ Prevent routing from button clicks
-      >
-        <button
-          onClick={handleShowProfile}
-          className="flex-1 bg-[#D6A767]  text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#C19653] transition-colors flex items-center justify-center space-x-1 "
+      {lawyer.is_premium ? (
+        <div
+          className="flex space-x-2 mt-auto pt-2"
+          onClick={(e) => e.stopPropagation()} // ⛔ Prevent routing from button clicks
         >
-          <span>View Profile</span>
-        </button>
-      </div>) : ( "" )}
+          <button
+            onClick={handleShowProfile}
+            className="flex-1 bg-[#D6A767]  text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#C19653] transition-colors flex items-center justify-center space-x-1 "
+          >
+            <span>View Profile</span>
+          </button>
+        </div>
+      ) : (
+        ''
+      )}
     </div>
   );
 }

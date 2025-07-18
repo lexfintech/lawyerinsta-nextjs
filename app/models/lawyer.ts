@@ -66,7 +66,7 @@ const LawyerSchema: Schema<ILawyer> = new mongoose.Schema(
       type: String,
       default: null,
     },
-        education: { type: String, default: null },
+    education: { type: String, default: null },
     languages: { type: [String], default: [] },
     bio: { type: String, default: null },
     state_id: { type: Number, default: null },

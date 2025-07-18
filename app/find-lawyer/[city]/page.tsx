@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Search, Loader } from 'lucide-react';
+import { Search, Loader, ArrowUp } from 'lucide-react';
 import Select, { SingleValue } from 'react-select';
 import LawyerCard from '@/components/LawyerCard';
 import { toast } from 'sonner';
@@ -104,33 +104,40 @@ export default function FindLawyer() {
 
   const params = useParams();
   const cityName = params?.city;
-
-
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
-    if(!cityName) return ;
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!cityName) return;
 
     setIsSearching(true);
     setHasSearched(false);
 
     fetch('/api/find-lawyer', {
-     method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-          city: cityName,
-        }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        city: cityName,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.data) {
-          setSearchResults(data.data)
-          setIsSearching(false)
+          setSearchResults(data.data);
+          setIsSearching(false);
           setHasSearched(true);
-        };
+        }
       })
       .catch((err) => console.error('Failed to load lawyer data:', err));
-  },[])
-  
+  }, []);
 
   const handleSearch = async () => {
     if (!selectedCity) {
@@ -167,6 +174,10 @@ export default function FindLawyer() {
     (a, b) => (b.is_premium ? 1 : 0) - (a.is_premium ? 1 : 0),
   );
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen">
       <section className="bg-[#E6D0B1] py-10 ">
@@ -182,7 +193,7 @@ export default function FindLawyer() {
                 options={cities}
                 value={selectedCity}
                 onChange={(option) => setSelectedCity(option)}
-                placeholder = {cityName ? cityName : "Select City"}
+                placeholder={cityName ? cityName : 'Select City'}
               />
               {/* <Select
                 options={specializations}
@@ -213,7 +224,8 @@ export default function FindLawyer() {
           <div className="max-w-none w-[90%] mx-auto px-4">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-black mb-4">
-                {searchResults.length} lawyers found in {selectedCity?.label || cityName}
+                {searchResults.length} lawyers found in{' '}
+                {selectedCity?.label || cityName}
               </h2>
               {/* <p className="text-gray-600">
                 Showing {selectedSpecialization?.label} specialists
@@ -245,6 +257,15 @@ export default function FindLawyer() {
             </p>
           </div>
         </section>
+      )}
+
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 p-3 rounded-full bg-[#D6A767] text-white shadow-lg hover:bg-[#C29350] transition-all duration-300 z-50"
+        >
+          <ArrowUp />
+        </button>
       )}
     </div>
   );

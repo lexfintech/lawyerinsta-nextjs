@@ -86,7 +86,6 @@ export default function Footer() {
                   info@lawyerinsta.com
                 </a>
               </div>
-              
             </div>
           </div>
         </div>
