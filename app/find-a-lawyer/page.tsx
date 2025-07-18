@@ -90,6 +90,7 @@ const cities: OptionType[] = [
   'Pune',
   'Kochi',
   'Gurugram',
+  'Hyderabad'
 ].map((label) => ({ value: label, label }));
 
 export default function FindLawyer() {
