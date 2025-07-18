@@ -6,7 +6,6 @@ import Select, { SingleValue } from 'react-select';
 import LawyerCard from '@/components/LawyerCard';
 import { toast } from 'sonner';
 
-
 // Types
 type OptionType = { value: string; label: string };
 
@@ -90,7 +89,7 @@ const cities: OptionType[] = [
   'Chennai',
   'Pune',
   'Kochi',
-  'Gurugram'
+  'Gurugram',
 ].map((label) => ({ value: label, label }));
 
 export default function FindLawyer() {
@@ -100,16 +99,16 @@ export default function FindLawyer() {
   const [searchResults, setSearchResults] = useState<LawyerData[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-const [showBackToTop, setShowBackToTop] = useState(false);
-  
-useEffect(() => {
-  const handleScroll = () => {
-    setShowBackToTop(window.scrollY > 300);
-  };
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
-  window.addEventListener('scroll', handleScroll);
-  return () => window.removeEventListener('scroll', handleScroll);
-}, []);
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSearch = async () => {
     if (!selectedCity) {
@@ -147,8 +146,8 @@ useEffect(() => {
   );
 
   const scrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen">
@@ -230,14 +229,13 @@ useEffect(() => {
         </section>
       )}
       {showBackToTop && (
-  <button
-    onClick={scrollToTop}
-    className="fixed bottom-8 right-8 p-3 rounded-full bg-[#D6A767] text-white shadow-lg hover:bg-[#C29350] transition-all duration-300 z-50"
-  >
-    <ArrowUp />
-  </button>
-)}
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 p-3 rounded-full bg-[#D6A767] text-white shadow-lg hover:bg-[#C29350] transition-all duration-300 z-50"
+        >
+          <ArrowUp />
+        </button>
+      )}
     </div>
-
   );
 }

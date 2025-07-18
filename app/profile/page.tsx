@@ -12,8 +12,11 @@ import {
   GraduationCap,
   VideoIcon,
 } from 'lucide-react';
-import { InstagramLogoIcon, LinkedInLogoIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
-
+import {
+  InstagramLogoIcon,
+  LinkedInLogoIcon,
+  TwitterLogoIcon,
+} from '@radix-ui/react-icons';
 
 import Image from 'next/image';
 
@@ -40,7 +43,7 @@ const availableCities = [
   'Chennai',
   'Pune',
   'Kochi',
-  'Gurguram'
+  'Gurguram',
 ];
 
 const expertiseOptions = [
@@ -197,16 +200,15 @@ export default function LawyerProfile() {
     return undefined;
   };
 
- const calculateExperience = (startYear?: number): number => {
-  if (!startYear || isNaN(startYear)) return 0;
+  const calculateExperience = (startYear?: number): number => {
+    if (!startYear || isNaN(startYear)) return 0;
 
-  const currentYear = new Date().getFullYear();
+    const currentYear = new Date().getFullYear();
 
-  if (startYear > currentYear) return 0;
+    if (startYear > currentYear) return 0;
 
-  return currentYear - startYear; // Handles all valid cases, including when startYear === currentYear
-};
-
+    return currentYear - startYear; // Handles all valid cases, including when startYear === currentYear
+  };
 
   const handleEdit = () => {
     const convertToArray = (fieldData: any): string[] =>
@@ -362,7 +364,7 @@ export default function LawyerProfile() {
   );
   const displayExperience = calculateExperience(displayedPracticeStartYear);
 
-    const slideshowImages = [
+  const slideshowImages = [
     '/assets/images/slide1.jpg',
     '/assets/images/slide2.jpg',
     '/assets/images/slide3.jpg',
@@ -380,12 +382,11 @@ export default function LawyerProfile() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="relative h-64 bg-gradient-to-r from-[#3C222F] to-[#D6A767]">
-      
-          <img
+        <img
           src={
             isEditing
               ? editData.cover_picture_url
-              : lawyerData.cover_picture_url 
+              : lawyerData.cover_picture_url
           }
           alt="Cover"
           className="w-full h-full object-cover"
@@ -406,11 +407,11 @@ export default function LawyerProfile() {
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
               <div className="relative">
-                 <img
+                <img
                   src={
                     isEditing
                       ? editData.profile_picture_url
-                      : lawyerData.profile_picture_url 
+                      : lawyerData.profile_picture_url
                   }
                   alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
@@ -458,7 +459,9 @@ export default function LawyerProfile() {
                   <div className="flex items-center space-x-1">
                     {/* <Star className="h-5 w-5 text-yellow-400 fill-current" />
                      <div>{lawyerData.cases_completed} cases</div> */}
-                    <span className='card-label'>{displayExpertise.split(',').slice(0, 3).join(', ')}</span>
+                    <span className="card-label">
+                      {displayExpertise.split(',').slice(0, 3).join(', ')}
+                    </span>
                   </div>
                   {/* <div className='flex items-center space-x-1'>
                     <LinkedInLogoIcon className="h-5 w-5 text-[#0077B5] cursor-pointer" />
@@ -491,37 +494,37 @@ export default function LawyerProfile() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 px-4">
-        <div className='lg:col-span-3'>
-                <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[100%] flex flex-col justify-between">
-      <h2 className="card-title">About Me</h2>
-      <div className="mt-1 h-full">
-        {isEditing ? (
-         <>
-           <textarea
-            name="bio"
-            value={editData.bio || ''}
-            onChange={(e) =>
-              handleInputChange(e.target.name, e.target.value)
-            }
-            className="input-field w-full h-[90%] resize-none"
-            rows={5}
-            placeholder="Write a brief bio about yourself..."
-            maxLength={500}
-          />
-          <p className="text-sm text-gray-500 mt-2">
-  {editData.bio?.length || 0}/500 characters
-</p>
-         </>
-        ) : (
-          <p className="text-gray-700 leading-relaxed h-full">
-            {lawyerData.bio || "No bio available..."}
-          </p>
-        )}
-      </div>
-    </div>
-        </div>
-  {/* Top Row: About Me & Intro Video */}
-   {lawyerData.is_premium ? (
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[100%] flex flex-col justify-between">
+              <h2 className="card-title">About Me</h2>
+              <div className="mt-1 h-full">
+                {isEditing ? (
+                  <>
+                    <textarea
+                      name="bio"
+                      value={editData.bio || ''}
+                      onChange={(e) =>
+                        handleInputChange(e.target.name, e.target.value)
+                      }
+                      className="input-field w-full h-[90%] resize-none"
+                      rows={5}
+                      placeholder="Write a brief bio about yourself..."
+                      maxLength={500}
+                    />
+                    <p className="text-sm text-gray-500 mt-2">
+                      {editData.bio?.length || 0}/500 characters
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-gray-700 leading-relaxed h-full">
+                    {lawyerData.bio || 'No bio available...'}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+          {/* Top Row: About Me & Intro Video */}
+          {lawyerData.is_premium ? (
             <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
               {/* About Me - 65% */}
               <div className="relative w-full h-64 overflow-hidden rounded-xl">
@@ -571,11 +574,11 @@ export default function LawyerProfile() {
             ''
           )}
 
-  {/* Bottom Row: Three Cards */}
-  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-    <h2 className="card-title">
-      <User /> Contact Information
-    </h2>
+          {/* Bottom Row: Three Cards */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+            <h2 className="card-title">
+              <User /> Contact Information
+            </h2>
             <div>
               <h3 className="card-label">Email Address</h3>
               {isEditing ? (
@@ -626,13 +629,13 @@ export default function LawyerProfile() {
                 <p className="card-value">{lawyerData.address}</p>
               )}
             </div>
-  </div>
+          </div>
 
-  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-    <h2 className="card-title">
-      <Briefcase /> Professional Details
-    </h2>
-    <div>
+          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+            <h2 className="card-title">
+              <Briefcase /> Professional Details
+            </h2>
+            <div>
               <h3 className="card-label">Enrollment Number</h3>
               {isEditing ? (
                 <input
@@ -648,7 +651,7 @@ export default function LawyerProfile() {
                 <p className="card-value">{lawyerData.enrollment_id}</p>
               )}
             </div>
-    <div>
+            <div>
               <h3 className="card-label">Other Practice Areas</h3>
               {isEditing ? (
                 <AutocompleteMultiSelect
@@ -678,9 +681,7 @@ export default function LawyerProfile() {
             </div> */}
             <div>
               <h3 className="card-label">Years of Experience</h3>
-              <p className="card-value bg-gray-100 rounded-md p-2">
-                20+ years
-              </p>
+              <p className="card-value bg-gray-100 rounded-md p-2">20+ years</p>
             </div>
             <div>
               <h3 className="card-label">Cop registered bar association</h3>
@@ -697,13 +698,13 @@ export default function LawyerProfile() {
                 <p className="card-value">{lawyerData.court_practice}</p>
               )}
             </div>
-  </div>
+          </div>
 
-  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-    <h2 className="card-title">
-      <GraduationCap /> Additional Information
-    </h2>
-     <div>
+          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+            <h2 className="card-title">
+              <GraduationCap /> Additional Information
+            </h2>
+            <div>
               <h3 className="card-label">Cities of Practice</h3>
               {isEditing ? (
                 <AutocompleteMultiSelect
@@ -746,11 +747,8 @@ export default function LawyerProfile() {
                 <p className="card-value">{displayLanguages}</p>
               )}
             </div>
-  </div>
-</div>
-
-
-
+          </div>
+        </div>
       </div>
       <style jsx global>{`
         .btn-primary {
