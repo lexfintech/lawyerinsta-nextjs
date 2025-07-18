@@ -40,21 +40,23 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
     return undefined;
   };
 
-   const calculateExperience = (startYear?: number): number => {
-  if (!startYear || isNaN(startYear)) return 0;
+  const calculateExperience = (startYear?: number): number => {
+    if (!startYear || isNaN(startYear)) return 0;
 
-  const currentYear = new Date().getFullYear();
+    const currentYear = new Date().getFullYear();
 
-  if (startYear > currentYear) return 0;
+    if (startYear > currentYear) return 0;
 
-  return currentYear - startYear; // Handles all valid cases, including when startYear === currentYear
-};
+    return currentYear - startYear; // Handles all valid cases, including when startYear === currentYear
+  };
 
-const displayedPracticeStartYear = getYearFromEnrollment(
+  const displayedPracticeStartYear = getYearFromEnrollment(
     lawyer.enrollment_id,
   );
 
   const displayExperience = calculateExperience(displayedPracticeStartYear);
+
+  console.log(lawyer.area_of_expertise, typeof lawyer.area_of_expertise);
 
   const handleShowProfile = () => {
     router.push(`/lawyer-profile/${lawyer.enrollment_id}`);
@@ -62,7 +64,7 @@ const displayedPracticeStartYear = getYearFromEnrollment(
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow flex flex-col w-full max-w-[460px] cursor-pointer">
-      <div className="flex justify-between mb-4 gap-4">
+      <div className="flex justify-between mb-4 gap-4 max-w-fit">
         {/* Profile Image + Info */}
         <div className="flex gap-4 items-start">
           <Image
@@ -73,16 +75,16 @@ const displayedPracticeStartYear = getYearFromEnrollment(
             height={64}
           />
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-black truncate">
-                {lawyer.first_Name} {lawyer.last_Name}
+            <div className="flex items-center gap-2 max-w-[280px]">
+              <h3 className="text-lg font-semibold text-black truncate overflow-hidden whitespace-nowrap">
+                {`${lawyer.first_Name} ${lawyer.last_Name}`}
               </h3>
               {lawyer.is_premium && (
                 <Crown className="h-5 w-5 text-[#D6A767]" />
               )}
             </div>
             <p className="text-sm text-gray-600">
-              {`${displayExperience} Years Experience` || "N/A"}
+              {`${displayExperience} Years Experience` || 'N/A'}
             </p>
           </div>
         </div>
@@ -97,7 +99,7 @@ const displayedPracticeStartYear = getYearFromEnrollment(
       <div className="text-sm text-gray-600 mb-4 space-y-1">
         <p>
           <span className="font-semibold">Specialization:</span>{' '}
-          {specialization || lawyer.area_of_expertise || 'N/A'}
+          {lawyer.area_of_expertise[0] || 'N/A'}
         </p>
         <p>
           <span className="font-semibold">Location:</span> {city || 'N/A'}
