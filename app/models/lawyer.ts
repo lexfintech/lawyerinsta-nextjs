@@ -22,7 +22,7 @@ export interface ILawyer extends Document {
   profile_overview: string;
   profile_picture_url: string;
   cover_picture_url: string;
-  education: string;
+  education: string;  
   languages: string[];
   bio: string;
   state_id: number;
