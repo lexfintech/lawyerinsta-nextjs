@@ -30,13 +30,13 @@ export default function Footer() {
                 href="/find-a-lawyer"
                 className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
               >
-                Find A Lawyer
+                Find a Lawyer
               </Link>
               <Link
                 href="/signup"
                 className="block text-[#D6A767] hover:text-[#D9A865] transition-colors"
               >
-                Register As A Lawyer
+                Register as a Lawyer
               </Link>
               {/* <Link
                 href="/careers"
@@ -83,7 +83,7 @@ export default function Footer() {
                   href="mailto:Info@lawyerinsta.com"
                   className="text-[#D6A767] hover:text-[#D9A865] transition-colors"
                 >
-                  Info@lawyerinsta.com
+                  info@lawyerinsta.com
                 </a>
               </div>
               

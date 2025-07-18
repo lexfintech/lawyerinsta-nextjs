@@ -90,7 +90,8 @@ const cities: OptionType[] = [
   'Chennai',
   'Pune',
   'Kochi',
-  'Gurugram'
+  'Gurugram',
+  'Hyderabad',
 ].map((label) => ({ value: label, label }));
 
 export default function FindLawyer() {
@@ -181,7 +182,7 @@ export default function FindLawyer() {
                 options={cities}
                 value={selectedCity}
                 onChange={(option) => setSelectedCity(option)}
-                placeholder="Select City"
+                placeholder = {cityName ? cityName : "Select City"}
               />
               {/* <Select
                 options={specializations}

@@ -43,7 +43,7 @@ export default function Contact() {
                       href="mailto:Info@lawyerinsta.com"
                       className="text-gray-600 hover:text-[#D6A767] transition-colors"
                     >
-                      Info@lawyerinsta.com
+                      info@lawyerinsta.com
                     </a>
                   </div>
                 </div>
@@ -65,7 +65,7 @@ export default function Contact() {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-4">
+                {/* <div className="flex items-start space-x-4">
                   <div className="bg-[#D6A767] bg-opacity-10 p-3 rounded-lg">
                     <MapPin className="h-6 w-6 text-[#D6A767]" />
                   </div>
@@ -97,7 +97,7 @@ export default function Contact() {
                       Sunday: Closed
                     </p>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 
