@@ -84,7 +84,7 @@ const specializations: OptionType[] = [
 // Cities
 const cities: OptionType[] = [
   'Delhi',
-  'Bengaluru',
+  'Bangalore',
   'Ahmedabad',
   'Chennai',
   'Pune',

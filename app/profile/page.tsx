@@ -35,7 +35,7 @@ const availableLanguages = [
 
 const availableCities = [
   'Delhi',
-  'Bengaluru',
+  'Bangalore',
   'Ahmedabad',
   'Chennai',
   'Pune',
@@ -476,10 +476,8 @@ export default function LawyerProfile() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 px-4">
-  {/* Top Row: About Me & Intro Video */}
-  {lawyerData.is_premium ? ( <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
-    {/* About Me - 65% */}
-    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[60%] flex flex-col justify-between">
+        <div className='lg:col-span-3'>
+                <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[100%] flex flex-col justify-between">
       <h2 className="card-title">About Me</h2>
       <div className="mt-1 h-full">
         {isEditing ? (
@@ -504,6 +502,15 @@ export default function LawyerProfile() {
             {lawyerData.bio || "No bio available..."}
           </p>
         )}
+      </div>
+    </div>
+        </div>
+  {/* Top Row: About Me & Intro Video */}
+  {lawyerData.is_premium ? ( <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
+    {/* About Me - 65% */}
+    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[60%] flex flex-col justify-between">
+      <div className="mt-1 h-full">
+        
       </div>
     </div>
 

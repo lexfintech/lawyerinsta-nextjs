@@ -32,7 +32,7 @@ export default function Header() {
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href="" className="flex items-center space-x-1 w-[25%] md:w-[15%] lg:w-[12%]">
+          <Link href="/" className="flex items-center space-x-1 w-[25%] md:w-[15%] lg:w-[12%]">
             <Image src={Logo} alt="LawyerInsta Logo" className="w-[100%] md:w-[70%]" />
           </Link>
 
