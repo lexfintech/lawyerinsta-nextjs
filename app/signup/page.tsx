@@ -9,7 +9,7 @@ import Select from 'react-select';
 
 const cities = [
   'Delhi',
-  'Bengaluru',
+  'Bangalore',
   'Ahmedabad',
   'Chennai',
   'Pune',
