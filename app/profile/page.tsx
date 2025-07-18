@@ -44,6 +44,7 @@ const availableCities = [
   'Pune',
   'Kochi',
   'Gurguram',
+  'Hyderabad',
 ];
 
 const expertiseOptions = [
