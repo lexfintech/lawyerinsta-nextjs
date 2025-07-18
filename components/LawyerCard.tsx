@@ -75,7 +75,7 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
             height={64}
           />
           <div>
-            <div className="flex items-center gap-2 max-w-[280px]">
+            <div className="flex items-center gap-2 max-w-[180px] md:max-w-[280px]">
               <h3 className="text-lg font-semibold text-black truncate overflow-hidden whitespace-nowrap">
                 {`${lawyer.first_Name} ${lawyer.last_Name}`}
               </h3>
