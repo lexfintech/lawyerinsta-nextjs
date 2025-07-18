@@ -5,6 +5,7 @@ import { Search, Loader } from 'lucide-react';
 import Select, { SingleValue } from 'react-select';
 import LawyerCard from '@/components/LawyerCard';
 import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
 
 // Types
 type OptionType = { value: string; label: string };
@@ -89,7 +90,7 @@ const cities: OptionType[] = [
   'Chennai',
   'Pune',
   'Kochi',
-  'Gurguram'
+  'Gurugram'
 ].map((label) => ({ value: label, label }));
 
 export default function FindLawyer() {

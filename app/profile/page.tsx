@@ -362,6 +362,21 @@ export default function LawyerProfile() {
   );
   const displayExperience = calculateExperience(displayedPracticeStartYear);
 
+    const slideshowImages = [
+    '/assets/images/slide1.jpg',
+    '/assets/images/slide2.jpg',
+    '/assets/images/slide3.jpg',
+  ];
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slideshowImages.length);
+    }, 3000); // Change slide every 3 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="relative h-64 bg-gradient-to-r from-[#3C222F] to-[#D6A767]">
@@ -506,50 +521,61 @@ export default function LawyerProfile() {
     </div>
         </div>
   {/* Top Row: About Me & Intro Video */}
-  {lawyerData.is_premium ? ( <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
-    {/* About Me - 65% */}
-    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[60%] flex flex-col justify-between">
-      <div className="mt-1 h-full">
-        
-      </div>
-    </div>
+   {lawyerData.is_premium ? (
+            <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
+              {/* About Me - 65% */}
+              <div className="relative w-full h-64 overflow-hidden rounded-xl">
+                <Image
+                  src={slideshowImages[currentSlide]}
+                  alt={`Slide ${currentSlide + 1}`}
+                  layout="fill"
+                  objectFit="fit"
+                  className="transition-opacity duration-700 ease-in-out"
+                />
 
-    {/* Intro Video - 35% */}
-    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[40%] flex flex-col justify-between text-center">
-      <h2 className="card-title text-xl font-semibold">
-        <VideoIcon className="inline-block mr-2" /> Introduction Video
-      </h2>
-      <iframe
-        className="w-full h-[200px] md:h-[200px] lg:h-[200px] rounded-md mt-4"
-        src="https://www.youtube.com/embed/YanmpP6e69I"
-        title="Dr Moksha Kalyanram Abhiramula | Specialised in Corporate, Tax, IPR, ADR, M &amp; A | TEDx Speaker"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-      ></iframe>
-    </div>
-  </div>) : ( "" )}
+                {/* Navigation Buttons */}
+                <div className="absolute inset-0 flex justify-between items-center px-4">
+                  <button
+                    onClick={() =>
+                      setCurrentSlide((prev) =>
+                        prev === 0 ? slideshowImages.length - 1 : prev - 1,
+                      )
+                    }
+                    className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    onClick={() =>
+                      setCurrentSlide(
+                        (prev) => (prev + 1) % slideshowImages.length,
+                      )
+                    }
+                    className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+
+              {/* Intro Video - 35% */}
+              <iframe
+                className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1"
+                src="https://www.youtube.com/embed/hJdlhSy5bi0"
+                title="The RajaSaab Telugu Teaser | Prabhas | Maruthi | Thaman | TG Vishwa Prasad | Dec 5 2025"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              ></iframe>
+            </div>
+          ) : (
+            ''
+          )}
 
   {/* Bottom Row: Three Cards */}
   <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
     <h2 className="card-title">
       <User /> Contact Information
     </h2>
-     <div>
-              <h3 className="card-label">Enrollment Number</h3>
-              {isEditing ? (
-                <input
-                  name="enrollment_id"
-                  value={editData.enrollment_id || ''}
-                  readOnly
-                  onChange={(e) =>
-                    handleInputChange(e.target.name, e.target.value)
-                  }
-                  className="input-field bg-gray-100 cursor-not-allowed"
-                />
-              ) : (
-                <p className="card-value">{lawyerData.enrollment_id}</p>
-              )}
-            </div>
             <div>
               <h3 className="card-label">Email Address</h3>
               {isEditing ? (
@@ -607,6 +633,22 @@ export default function LawyerProfile() {
       <Briefcase /> Professional Details
     </h2>
     <div>
+              <h3 className="card-label">Enrollment Number</h3>
+              {isEditing ? (
+                <input
+                  name="enrollment_id"
+                  value={editData.enrollment_id || ''}
+                  readOnly
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  className="input-field bg-gray-100 cursor-not-allowed"
+                />
+              ) : (
+                <p className="card-value">{lawyerData.enrollment_id}</p>
+              )}
+            </div>
+    <div>
               <h3 className="card-label">Other Practice Areas</h3>
               {isEditing ? (
                 <AutocompleteMultiSelect
@@ -626,18 +668,18 @@ export default function LawyerProfile() {
                 </p>
               )}
             </div>
-            <div>
+            {/* <div>
               <h3 className="card-label">Practice Start Year</h3>
               <p className="card-value bg-gray-100 rounded-md p-2">
                 {isEditing
                   ? editData.practice_start_year || 'N/A'
                   : displayedPracticeStartYear || 'N/A'}
               </p>
-            </div>
+            </div> */}
             <div>
               <h3 className="card-label">Years of Experience</h3>
               <p className="card-value bg-gray-100 rounded-md p-2">
-                {isEditing ? editData.experience || 0 : displayExperience} years
+                20+ years
               </p>
             </div>
             <div>

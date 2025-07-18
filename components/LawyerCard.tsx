@@ -22,7 +22,7 @@ type Lawyer = {
 type Props = {
   lawyer: Lawyer;
   specialization?: string;
-  city?: string;
+  city?: any;
 };
 
 export default function LawyerCard({ lawyer, specialization, city }: Props) {
@@ -83,9 +83,11 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
                 <Crown className="h-5 w-5 text-[#D6A767]" />
               )}
             </div>
-            <p className="text-sm text-gray-600">
+            {lawyer.is_premium ? ( <p className="text-sm text-gray-600">
+              20+ Years Experience
+            </p>) : (<p className="text-sm text-gray-600">
               {`${displayExperience} Years Experience` || 'N/A'}
-            </p>
+            </p>)}
           </div>
         </div>
 
@@ -107,7 +109,7 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
       </div>
 
       {/* Contact Actions */}
-      <div
+      {lawyer.is_premium ? ( <div
         className="flex space-x-2 mt-auto pt-2"
         onClick={(e) => e.stopPropagation()} // ⛔ Prevent routing from button clicks
       >
@@ -117,7 +119,7 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
         >
           <span>View Profile</span>
         </button>
-      </div>
+      </div>) : ( "" )}
     </div>
   );
 }
