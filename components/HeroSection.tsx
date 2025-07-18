@@ -10,22 +10,22 @@ export default function HeroSection() {
           <div className="space-y-8">
             <h1 className="text-4xl md:text-6xl font-bold text-black leading-tight">
               India's Largest & Most{' '}
-              <span className="text-[#D6A767]">Trusted</span>{' '}
-              Lawyer Directory
+              <span className="text-[#D6A767]">Trusted</span> Lawyer Directory
             </h1>
             <p className="text-xl text-gray-700 leading-relaxed">
-              Making qualified legal help accessible, transparent, and instantaneous 
-              for every citizen of India. Connect with verified lawyers instantly.
+              Making qualified legal help accessible, transparent, and
+              instantaneous for every citizen of India. Connect with verified
+              lawyers instantly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/find-lawyer" className="btn-primary text-center">
                 Find a Lawyer
               </Link>
-              <Link href="/register-lawyer" className="btn-outline text-center">
+              <Link href="/signup" className="btn-outline text-center">
                 Register as Lawyer
               </Link>
             </div>
-            
+
             {/* Stats */}
             <div className="grid grid-cols-3 gap-6 pt-8">
               <div className="text-center">
@@ -51,21 +51,27 @@ export default function HeroSection() {
                   <Search className="h-8 w-8 text-[#D6A767]" />
                   <div>
                     <h3 className="font-semibold">Find Expert Lawyers</h3>
-                    <p className="text-sm text-gray-600">Search by location, specialization</p>
+                    <p className="text-sm text-gray-600">
+                      Search by location, specialization
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
                   <Shield className="h-8 w-8 text-[#D6A767]" />
                   <div>
                     <h3 className="font-semibold">Verified Profiles</h3>
-                    <p className="text-sm text-gray-600">All lawyers are verified & trusted</p>
+                    <p className="text-sm text-gray-600">
+                      All lawyers are verified & trusted
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
                   <Users className="h-8 w-8 text-[#D6A767]" />
                   <div>
                     <h3 className="font-semibold">Connect Instantly</h3>
-                    <p className="text-sm text-gray-600">Direct contact with lawyers</p>
+                    <p className="text-sm text-gray-600">
+                      Direct contact with lawyers
+                    </p>
                   </div>
                 </div>
               </div>

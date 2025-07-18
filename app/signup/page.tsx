@@ -2,222 +2,360 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff, Scale } from 'lucide-react';
+import { Eye, EyeOff, Info } from 'lucide-react';
+import { toast, Toaster } from 'sonner';
+import { useRouter } from 'next/navigation';
+import Select from 'react-select';
+
+const cities = [
+  'Delhi',
+  'Bengaluru',
+  'Ahmedabad',
+  'Chennai',
+  'Pune',
+  'Gurugram',
+  'Kochi',
+].map((city) => ({ value: city, label: city }));
+
+const specializations = [
+  'Admiralty Law',
+  'Animal Law',
+  'Arbitration Law',
+  'Armed Force Law',
+  'Art Law',
+  'Artificial Intelligence',
+  'Asset Management',
+  'Aviation Law',
+  'Banking Law',
+  'Bankruptcy & Insolvency (IBC)',
+  'Business Law',
+  'Capital Markets',
+  'Civil Litigation',
+  'Commercial Litigation',
+  'Company Law',
+  'Competition & Anti-trust Law',
+  'Constitutional Law',
+  'Consumer Law',
+  'Contracts',
+  'Conveyance',
+  'Copyright Law',
+  'Corporate Law',
+  'Corporate Secretarial',
+  'Criminal Law',
+  'Cross Border Transaction',
+  'Customs',
+  'Cyber Law',
+  'Data Privacy & Protection',
+  'Debt Recovery',
+  'Dispute Resolution',
+  'Divorce',
+  "Director's Disputes",
+  'Domestic & Foreign Investment',
+  'Due Diligience',
+  'Economic offences',
+  'Electricity law',
+  'Employment law',
+  'Energy law',
+  'Entertainment law',
+  'Enviornment law',
+  'Equity & Capital restructuring',
+  'Family law',
+  'Fashion law',
+  'Funding Advisory',
+  'Gaming law',
+  'Healthcare law',
+  'Human RIghts law',
+  'Immigration law',
+].map((item) => ({ value: item, label: item }));
 
 export default function SignUp() {
+  const [formData, setFormData] = useState({
+    first_Name: '',
+    last_Name: '',
+    email: '',
+    mobile_Number: '',
+    enrollment_id: '',
+    password_hash: '',
+    confirmPassword: '',
+    termsAccepted: false,
+    city: [] as string[],
+    area_of_expertise: [] as string[],
+  });
+
+  const [errors, setErrors] = useState<any>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    let processedValue = value;
+    if (name === 'enrollment_id') {
+      processedValue = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : processedValue,
+    }));
+  };
+
+  const validate = () => {
+    const newErrors: any = {};
+    const requiredFields = [
+      'first_Name',
+      'last_Name',
+      'email',
+      'mobile_Number',
+      'enrollment_id',
+      'password_hash',
+      'confirmPassword',
+    ];
+
+    requiredFields.forEach((field) => {
+      if (!(formData[field as keyof typeof formData] as string)?.trim()) {
+        newErrors[field] = 'This field is required.';
+      }
+    });
+
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = 'Email is invalid.';
+    if (formData.mobile_Number && !/^\d{10}$/.test(formData.mobile_Number))
+      newErrors.mobile_Number = 'Mobile number must be 10 digits.';
+    if (formData.password_hash.length < 6)
+      newErrors.password_hash = 'Password must be at least 6 characters.';
+    if (formData.confirmPassword !== formData.password_hash)
+      newErrors.confirmPassword = 'Passwords do not match.';
+    if (!formData.termsAccepted)
+      newErrors.termsAccepted = 'You must accept the terms.';
+    if (formData.city.length === 0)
+      newErrors.city = 'Select at least one city.';
+    if (formData.area_of_expertise.length === 0)
+      newErrors.area_of_expertise = 'Select at least one expertise.';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    if (isLoading) return;
+    if (validate()) {
+      setIsLoading(true);
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Registration successful! Redirecting...');
+        setTimeout(() => router.push('/profile'), 1500);
+      } else {
+        toast.error(data.message || 'Registration failed');
+        setErrors({ api: data.message || 'Registration failed' });
+      }
+      setIsLoading(false);
+    } else {
+      toast.error('Please fix the errors before submitting.');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+      <div className="max-w-3xl w-full space-y-8">
         <div className="text-center">
-          <Link href="/" className="flex items-center justify-center space-x-2 mb-6">
-            <Scale className="h-10 w-10 text-[#D6A767]" />
-            <span className="text-3xl font-bold text-black">LawyerInsta</span>
-          </Link>
-          <h2 className="text-3xl font-bold text-black">Register as a Lawyer</h2>
-          <p className="mt-2 text-gray-600">Join India's largest lawyer directory</p>
+          <h2 className="text-3xl font-bold text-black">
+            Register as a Lawyer
+          </h2>
+          <p className="mt-2 text-gray-600">
+            Join India's largest lawyer directory
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                  First Name
+              {['first_Name', 'last_Name'].map((field) => (
+                <div key={field}>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {field === 'first_Name' ? 'First Name *' : 'Last Name *'}
+                  </label>
+                  <input
+                    name={field}
+                    type="text"
+                    value={formData[field as keyof typeof formData] as string}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder={
+                      field === 'first_Name' ? 'First name' : 'Last name'
+                    }
+                  />
+                  {errors[field] && (
+                    <p className="text-red-500 text-xs mt-1">{errors[field]}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {['enrollment_id', 'email', 'mobile_Number'].map((field) => (
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {field === 'enrollment_id'
+                    ? 'Enrollment Number *'
+                    : field === 'email'
+                      ? 'Email *'
+                      : 'Mobile Number *'}
                 </label>
                 <input
-                  id="firstName"
-                  name="firstName"
+                  name={field}
                   type="text"
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-                  placeholder="First name"
+                  value={formData[field as keyof typeof formData] as string}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder={`Enter your ${field.replace('_', ' ')}`}
                 />
+                {errors[field] && (
+                  <p className="text-red-500 text-xs mt-1">{errors[field]}</p>
+                )}
               </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                  Last Name
+            ))}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Cities *
+              </label>
+              <Select
+                isMulti
+                name="city"
+                options={cities}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                value={cities.filter((option) =>
+                  formData.city.includes(option.value),
+                )}
+                onChange={(selectedOptions) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    city: selectedOptions.map((option) => option.value),
+                  }));
+                }}
+              />
+              {errors.city && (
+                <p className="text-red-500 text-xs mt-1">{errors.city}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Areas of Expertise *
+              </label>
+              <Select
+                isMulti
+                name="area_of_expertise"
+                options={specializations}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                value={specializations.filter((option) =>
+                  formData.area_of_expertise?.includes(option.value),
+                )}
+                onChange={(selectedOptions) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    area_of_expertise: selectedOptions.map(
+                      (option) => option.value,
+                    ),
+                  }));
+                }}
+              />
+              {errors.area_of_expertise && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.area_of_expertise}
+                </p>
+              )}
+            </div>
+
+            {[
+              {
+                name: 'password_hash',
+                label: 'Password *',
+                visible: showPassword,
+                setVisible: setShowPassword,
+              },
+              {
+                name: 'confirmPassword',
+                label: 'Confirm Password *',
+                visible: showConfirmPassword,
+                setVisible: setShowConfirmPassword,
+              },
+            ].map(({ name, label, visible, setVisible }) => (
+              <div key={name}>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {label}
                 </label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-                  placeholder="Last name"
-                />
+                <div className="relative">
+                  <input
+                    name={name}
+                    type={visible ? 'text' : 'password'}
+                    value={formData[name as keyof typeof formData] as string}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder={`Enter ${label}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setVisible(!visible)}
+                    className="absolute right-3 top-2"
+                  >
+                    {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                {errors[name] && (
+                  <p className="text-red-500 text-xs mt-1">{errors[name]}</p>
+                )}
               </div>
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-                placeholder="Enter your email"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-                placeholder="Enter your phone number"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="barNumber" className="block text-sm font-medium text-gray-700 mb-2">
-                Bar Registration Number
-              </label>
-              <input
-                id="barNumber"
-                name="barNumber"
-                type="text"
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-                placeholder="Enter your bar registration number"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="specialization" className="block text-sm font-medium text-gray-700 mb-2">
-                Area of Expertise
-              </label>
-              <select
-                id="specialization"
-                name="specialization"
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-              >
-                <option value="">Select your specialization</option>
-                <option value="criminal">Criminal Law</option>
-                <option value="corporate">Corporate Law</option>
-                <option value="art">Art Law</option>
-                <option value="animal">Animal Law</option>
-                <option value="banking">Banking & Finance Law</option>
-                <option value="business">Business Law</option>
-                <option value="cyber">Cyber Law</option>
-                <option value="family">Family Law</option>
-                <option value="property">Property Law</option>
-                <option value="labor">Labor Law</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-2">
-                Years of Experience
-              </label>
-              <select
-                id="experience"
-                name="experience"
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-              >
-                <option value="">Select experience</option>
-                <option value="0-2">0-2 years</option>
-                <option value="3-5">3-5 years</option>
-                <option value="6-10">6-10 years</option>
-                <option value="11-15">11-15 years</option>
-                <option value="16-20">16-20 years</option>
-                <option value="20+">20+ years</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-                  placeholder="Create a password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  required
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent"
-                  placeholder="Confirm your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
-            </div>
+            ))}
 
             <div className="flex items-center">
               <input
-                id="terms"
-                name="terms"
+                id="termsAccepted"
+                name="termsAccepted"
                 type="checkbox"
-                required
-                className="h-4 w-4 text-[#D6A767] focus:ring-[#D6A767] border-gray-300 rounded"
+                checked={formData.termsAccepted}
+                onChange={handleChange}
+                className="h-4 w-4 text-[#D6A767] border-gray-300 rounded"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+              <label
+                htmlFor="termsAccepted"
+                className="ml-2 text-sm text-gray-700"
+              >
                 I agree to the{' '}
-                <Link href="/terms" className="text-[#D6A767] hover:text-[#C19653]">
+                <Link href="/terms" className="text-[#D6A767] underline">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-[#D6A767] hover:text-[#C19653]">
+                <Link href="/privacy" className="text-[#D6A767] underline">
                   Privacy Policy
                 </Link>
               </label>
             </div>
+            {errors.termsAccepted && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.termsAccepted}
+              </p>
+            )}
 
-            <button type="submit" className="btn-primary w-full">
-              Register as Lawyer
+            <button
+              type="submit"
+              className="w-full py-3 px-4 bg-[#D6A767] text-white rounded-md"
+            >
+              {isLoading ? 'Registering...' : 'Register as Lawyer'}
             </button>
           </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Already have an account?{' '}
-              <Link href="/login" className="text-[#D6A767] hover:text-[#C19653] font-semibold">
-                Sign in
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 }

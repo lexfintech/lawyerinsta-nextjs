@@ -1,61 +1,257 @@
 'use client';
- 
-import { useState } from 'react';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Award, 
-  Calendar, 
-  Star, 
-  Edit3, 
-  Save, 
-  X, 
+
+import { useEffect, useState, useRef } from 'react';
+import {
+  User,
+  Edit3,
+  Save,
+  X,
   Camera,
   Crown,
   Briefcase,
   GraduationCap,
-  Scale
+  VideoIcon,
 } from 'lucide-react';
+import { InstagramLogoIcon, LinkedInLogoIcon, TwitterLogoIcon } from '@radix-ui/react-icons';
 
-// Mock lawyer data
-const initialLawyerData = {
-  id: 1,
-  firstName: 'Rajesh',
-  lastName: 'Kumar',
-  email: 'rajesh.kumar@example.com',
-  phone: '+91 98765 43210',
-  barNumber: 'BAR123456',
-  specialization: 'Criminal Law',
-  experience: 15,
-  city: 'Delhi',
-  address: '123 Legal Street, Connaught Place, New Delhi - 110001',
-  bio: 'Experienced criminal lawyer with 15 years of practice. Specialized in handling complex criminal cases with a success rate of 85%. Committed to providing the best legal representation to my clients.',
-  education: 'LLB from Delhi University, LLM from Jamia Millia Islamia',
-  languages: 'Hindi, English, Punjabi',
-  courtPractice: 'Delhi High Court, Supreme Court of India',
-  consultationFee: '₹2,000',
-  rating: 4.8,
-  totalCases: 250,
-  successRate: 85,
-  isPremium: true,
-  profileImage: 'https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=400',
-  coverImage: 'https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg?auto=compress&cs=tinysrgb&w=1200'
+
+import Image from 'next/image';
+
+// --- DATA LISTS ---
+const availableLanguages = [
+  'English',
+  'Spanish',
+  'Hindi',
+  'Telugu',
+  'French',
+  'German',
+  'Mandarin Chinese',
+  'Arabic',
+  'Bengali',
+  'Russian',
+  'Portuguese',
+  'Japanese',
+];
+
+const availableCities = [
+  'Delhi',
+  'Bengaluru',
+  'Ahmedabad',
+  'Chennai',
+  'Pune',
+  'Kochi',
+  'Gurguram'
+];
+
+const expertiseOptions = [
+  { value: 'Criminal Law', label: 'Criminal Law' },
+  { value: 'Corporate Law', label: 'Corporate Law' },
+  { value: 'Art Law', label: 'Art Law' },
+  { value: 'Animal Law', label: 'Animal Law' },
+  { value: 'Banking & Finance Law', label: 'Banking & Finance Law' },
+  { value: 'Business Law', label: 'Business Law' },
+  { value: 'Cyber Law', label: 'Cyber Law' },
+  { value: 'Family Law', label: 'Family Law' },
+  { value: 'Property Law', label: 'Property Law' },
+  { value: 'Labor Law', label: 'Labor Law' },
+];
+
+// --- TYPE DEFINITION ---
+type LawyerData = {
+  cases_completed?: number;
+  court_practice?: string;
+  first_Name?: string;
+  last_Name?: string;
+  email?: string;
+  mobile_Number?: string;
+  city?: string[];
+  address?: string;
+  profile_picture_url?: string;
+  cover_picture_url?: string;
+  area_of_expertise?: string[];
+  is_premium?: boolean;
+  rating?: number;
+  totalCases?: number;
+  successRate?: number;
+  enrollment_id?: string;
+  practice_start_year?: number;
+  experience?: number;
+  education?: string;
+  languages?: string[];
+  bio?: string;
 };
 
+// --- REUSABLE AUTOCOMPLETE COMPONENT ---
+const AutocompleteMultiSelect = ({
+  options,
+  selected,
+  onSelect,
+  onRemove,
+  placeholder = 'Type to search...',
+}: {
+  options: { value: string; label: string }[];
+  selected: string[];
+  onSelect: (value: string) => void;
+  onRemove: (value: string) => void;
+  placeholder?: string;
+}) => {
+  const [query, setQuery] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const filteredOptions = query
+    ? options.filter(
+        (option) =>
+          option.label.toLowerCase().includes(query.toLowerCase()) &&
+          !selected.includes(option.value),
+      )
+    : [];
+
+  const handleSelect = (value: string) => {
+    onSelect(value);
+    setQuery('');
+    setIsOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [wrapperRef]);
+
+  const getLabel = (value: string) =>
+    options.find((o) => o.value === value)?.label || value;
+
+  return (
+    <div className="relative w-full" ref={wrapperRef}>
+      <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-md min-h-[42px] items-center">
+        {(selected || []).map((value) => (
+          <div
+            key={value}
+            className="bg-[#D6A767] text-white flex items-center gap-1.5 px-2 py-1 rounded-full text-sm"
+          >
+            <span>{getLabel(value)}</span>
+            <button
+              type="button"
+              onClick={() => onRemove(value)}
+              className="hover:bg-black/20 rounded-full"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setIsOpen(true);
+          }}
+          onFocus={() => setIsOpen(true)}
+          placeholder={!selected || selected.length === 0 ? placeholder : ''}
+          className="flex-grow bg-transparent focus:outline-none p-1"
+        />
+      </div>
+
+      {isOpen && filteredOptions.length > 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          {filteredOptions.map((option) => (
+            <div
+              key={option.value}
+              onClick={() => handleSelect(option.value)}
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+            >
+              {option.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// --- MAIN LAWYER PROFILE COMPONENT ---
 export default function LawyerProfile() {
-  const [lawyerData, setLawyerData] = useState(initialLawyerData);
+  const [lawyerData, setLawyerData] = useState<LawyerData>({
+    court_practice: '',
+  });
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState(initialLawyerData);
+  const [editData, setEditData] = useState<LawyerData>({ court_practice: '' });
+
+  const getYearFromEnrollment = (
+    id: string | undefined,
+  ): number | undefined => {
+    if (!id || id.length < 4) return undefined;
+    const potentialYear = id.slice(-4);
+    if (!isNaN(Number(potentialYear))) {
+      const year = parseInt(potentialYear, 10);
+      if (year > 1950 && year <= new Date().getFullYear()) return year;
+    }
+    return undefined;
+  };
+
+ const calculateExperience = (startYear?: number): number => {
+  if (!startYear || isNaN(startYear)) return 0;
+
+  const currentYear = new Date().getFullYear();
+
+  if (startYear > currentYear) return 0;
+
+  return currentYear - startYear; // Handles all valid cases, including when startYear === currentYear
+};
+
 
   const handleEdit = () => {
-    setEditData(lawyerData);
+    const convertToArray = (fieldData: any): string[] =>
+      Array.isArray(fieldData)
+        ? fieldData
+        : fieldData
+          ? String(fieldData)
+              .split(',')
+              .map((item) => item.trim())
+          : [];
+
+    setEditData({
+      ...lawyerData,
+      languages: convertToArray(lawyerData.languages),
+      city: convertToArray(lawyerData.city),
+      area_of_expertise: convertToArray(lawyerData.area_of_expertise),
+    });
     setIsEditing(true);
   };
 
   const handleSave = () => {
-    setLawyerData(editData);
+    const derivedStartYear = getYearFromEnrollment(editData.enrollment_id);
+    const calculatedExperience = calculateExperience(derivedStartYear);
+
+    const finalData = {
+      ...editData,
+      practice_start_year: derivedStartYear,
+      experience: calculatedExperience,
+    };
+
+    setLawyerData(finalData);
+
+    const response = fetch('/api/lawyer', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(finalData),
+    });
+
+    response
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.data) setLawyerData(data.data);
+      })
+      .catch((error) => console.error('Error updating lawyer data:', error));
+
     setIsEditing(false);
   };
 
@@ -64,28 +260,45 @@ export default function LawyerProfile() {
     setIsEditing(false);
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setEditData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleInputChange = (field: string, value: string | number) => {
+    setEditData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddItem = (field: keyof LawyerData, value: string) => {
+    setEditData((prev) => {
+      const currentItems = (prev[field] as string[]) || [];
+      if (!currentItems.includes(value)) {
+        return { ...prev, [field]: [...currentItems, value] };
+      }
+      return prev;
+    });
+  };
+
+  const handleRemoveItem = (field: keyof LawyerData, value: string) => {
+    setEditData((prev) => {
+      const currentItems = (prev[field] as string[]) || [];
+      return {
+        ...prev,
+        [field]: currentItems.filter((item) => item !== value),
+      };
+    });
   };
 
   const handleImageUpload = (type: 'profile' | 'cover') => {
-    // In a real app, this would handle file upload
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
+      const target = e.target as HTMLInputElement;
+      const file = target.files?.[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          const imageUrl = e.target?.result as string;
+        reader.onload = (event) => {
+          const imageUrl = event.target?.result as string;
           if (type === 'profile') {
-            setEditData(prev => ({ ...prev, profileImage: imageUrl }));
+            setEditData((prev) => ({ ...prev, profile_picture_url: imageUrl }));
           } else {
-            setEditData(prev => ({ ...prev, coverImage: imageUrl }));
+            setEditData((prev) => ({ ...prev, cover_picture_url: imageUrl }));
           }
         };
         reader.readAsDataURL(file);
@@ -94,138 +307,167 @@ export default function LawyerProfile() {
     input.click();
   };
 
+  useEffect(() => {
+    const response = fetch('/api/lawyer', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    response
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.data) {
+          setLawyerData(data.data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching lawyer data:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (isEditing) {
+      const derivedYear = getYearFromEnrollment(editData.enrollment_id);
+      const calculatedExp = calculateExperience(derivedYear);
+      if (
+        derivedYear !== editData.practice_start_year ||
+        calculatedExp !== editData.experience
+      ) {
+        setEditData((prev) => ({
+          ...prev,
+          practice_start_year: derivedYear,
+          experience: calculatedExp,
+        }));
+      }
+    }
+  }, [editData.enrollment_id, isEditing]);
+
+  const languageOptions = availableLanguages.map((l) => ({
+    value: l,
+    label: l,
+  }));
+  const cityOptions = availableCities.map((c) => ({ value: c, label: c }));
+  const getLabel = (
+    options: { value: string; label: string }[],
+    value: string,
+  ) => options.find((o) => o.value === value)?.label || value;
+
+  const displayExpertise =
+    lawyerData.area_of_expertise
+      ?.map((e) => getLabel(expertiseOptions, e))
+      .join(', ') || 'Not specified';
+  const displayCities = lawyerData.city?.join(', ') || 'Not specified';
+  const displayLanguages = lawyerData.languages?.join(', ') || 'Not specified';
+  const displayedPracticeStartYear = getYearFromEnrollment(
+    lawyerData.enrollment_id,
+  );
+  const displayExperience = calculateExperience(displayedPracticeStartYear);
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Cover Photo Section */}
       <div className="relative h-64 bg-gradient-to-r from-[#3C222F] to-[#D6A767]">
-        <img 
-          src={isEditing ? editData.coverImage : lawyerData.coverImage} 
-          alt="Cover" 
+      
+          <img
+          src={
+            isEditing
+              ? editData.cover_picture_url
+              : lawyerData.cover_picture_url 
+          }
+          alt="Cover"
           className="w-full h-full object-cover"
         />
+
         {isEditing && (
           <button
             onClick={() => handleImageUpload('cover')}
-            className="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-colors"
+            className="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70"
           >
             <Camera className="h-5 w-5" />
           </button>
         )}
       </div>
 
-      {/* Profile Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative -mt-20 mb-8">
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
-              {/* Profile Picture */}
               <div className="relative">
-                <img 
-                  src={isEditing ? editData.profileImage : lawyerData.profileImage} 
-                  alt="Profile" 
+                 <img
+                  src={
+                    isEditing
+                      ? editData.profile_picture_url
+                      : lawyerData.profile_picture_url 
+                  }
+                  alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
                 {isEditing && (
                   <button
                     onClick={() => handleImageUpload('profile')}
-                    className="absolute bottom-2 right-2 bg-[#D6A767] text-white p-2 rounded-full hover:bg-[#C19653] transition-colors"
+                    className="absolute bottom-2 right-2 bg-[#D6A767] text-white p-2 rounded-full hover:bg-[#C19653]"
                   >
                     <Camera className="h-4 w-4" />
                   </button>
                 )}
               </div>
-
-              {/* Basic Info */}
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-2">
                   {isEditing ? (
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 flex-wrap">
                       <input
-                        type="text"
-                        value={editData.firstName}
-                        onChange={(e) => handleInputChange('firstName', e.target.value)}
-                        className="text-2xl font-bold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
+                        value={editData.first_Name || ''}
+                        onChange={(e) =>
+                          handleInputChange('first_Name', e.target.value)
+                        }
+                        className="text-2xl font-bold border-b-2 border-gray-300 focus:border-[#D6A767] focus:outline-none bg-transparent"
                         placeholder="First Name"
                       />
                       <input
-                        type="text"
-                        value={editData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        className="text-2xl font-bold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
+                        value={editData.last_Name || ''}
+                        onChange={(e) =>
+                          handleInputChange('last_Name', e.target.value)
+                        }
+                        className="text-2xl font-bold border-b-2 border-gray-300 focus:border-[#D6A767] focus:outline-none bg-transparent"
                         placeholder="Last Name"
                       />
                     </div>
                   ) : (
                     <h1 className="text-3xl font-bold text-black">
-                      {lawyerData.firstName} {lawyerData.lastName}
+                      {lawyerData.first_Name} {lawyerData.last_Name}
                     </h1>
                   )}
-                  {lawyerData.isPremium && (
+                  {lawyerData.is_premium && (
                     <Crown className="h-6 w-6 text-[#D6A767]" />
                   )}
                 </div>
-
-                <div className="flex items-center space-x-4 mb-4">
+                <div className="flex flex-col items-start space-x-4 mb-4 text-gray-600">
                   <div className="flex items-center space-x-1">
-                    <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                    <span className="font-semibold">{lawyerData.rating}</span>
+                    {/* <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                     <div>{lawyerData.cases_completed} cases</div> */}
+                    <span className='card-label'>{displayExpertise.split(',').slice(0, 3).join(', ')}</span>
                   </div>
-                  <div className="text-gray-600">
-                    {lawyerData.totalCases} cases completed
-                  </div>
-                  <div className="text-gray-600">
-                    {lawyerData.successRate}% success rate
-                  </div>
+                  {/* <div className='flex items-center space-x-1'>
+                    <LinkedInLogoIcon className="h-5 w-5 text-[#0077B5] cursor-pointer" />
+                    <InstagramLogoIcon className="h-5 w-5 text-[#E1306C] cursor-pointer" />
+                    <TwitterLogoIcon className="h-5 w-5 text-[#1DA1F2] cursor-pointer" />
+                  </div> */}
                 </div>
-
-                {isEditing ? (
-                  <select
-                    value={editData.specialization}
-                    onChange={(e) => handleInputChange('specialization', e.target.value)}
-                    className="text-lg text-[#D6A767] font-semibold border-b-2 border-[#D6A767] focus:outline-none bg-transparent"
-                  >
-                    <option value="Criminal Law">Criminal Law</option>
-                    <option value="Corporate Law">Corporate Law</option>
-                    <option value="Art Law">Art Law</option>
-                    <option value="Animal Law">Animal Law</option>
-                    <option value="Banking & Finance Law">Banking & Finance Law</option>
-                    <option value="Business Law">Business Law</option>
-                    <option value="Cyber Law">Cyber Law</option>
-                    <option value="Family Law">Family Law</option>
-                    <option value="Property Law">Property Law</option>
-                    <option value="Labor Law">Labor Law</option>
-                  </select>
-                ) : (
-                  <p className="text-lg text-[#D6A767] font-semibold">{lawyerData.specialization}</p>
-                )}
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex space-x-3">
+              <div className="flex-shrink-0">
                 {isEditing ? (
-                  <>
-                    <button
-                      onClick={handleSave}
-                      className="bg-[#D6A767] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#C19653] transition-colors flex items-center space-x-2"
-                    >
-                      <Save className="h-4 w-4" />
-                      <span>Save</span>
+                  <div className="flex gap-2">
+                    <button onClick={handleSave} className="btn-primary">
+                      <Save className="h-4 w-4 mr-1" />
+                      Save
                     </button>
-                    <button
-                      onClick={handleCancel}
-                      className="bg-gray-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-600 transition-colors flex items-center space-x-2"
-                    >
-                      <X className="h-4 w-4" />
-                      <span>Cancel</span>
+                    <button onClick={handleCancel} className="btn-secondary">
+                      <X className="h-4 w-4 mr-1" />
+                      Cancel
                     </button>
-                  </>
+                  </div>
                 ) : (
-                  <button
-                    onClick={handleEdit}
-                    className="bg-[#D6A767] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#C19653] transition-colors flex items-center space-x-2"
-                  >
-                    <Edit3 className="h-4 w-4" />
-                    <span>Update Profile</span>
+                  <button onClick={handleEdit} className="btn-primary">
+                    <Edit3 className="h-4 w-4 mr-1" />
+                    Update Profile
                   </button>
                 )}
               </div>
@@ -233,226 +475,300 @@ export default function LawyerProfile() {
           </div>
         </div>
 
-        {/* Profile Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-          {/* Contact Information */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-black mb-6 flex items-center space-x-2">
-              <User className="h-5 w-5 text-[#D6A767]" />
-              <span>Contact Information</span>
-            </h2>
-            
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-[#D6A767]" />
-                {isEditing ? (
-                  <input
-                    type="email"
-                    value={editData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                  />
-                ) : (
-                  <span className="text-gray-700">{lawyerData.email}</span>
-                )}
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-[#D6A767]" />
-                {isEditing ? (
-                  <input
-                    type="tel"
-                    value={editData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                  />
-                ) : (
-                  <span className="text-gray-700">{lawyerData.phone}</span>
-                )}
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <MapPin className="h-5 w-5 text-[#D6A767]" />
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={editData.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
-                    className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                  />
-                ) : (
-                  <span className="text-gray-700">{lawyerData.city}</span>
-                )}
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-[#D6A767] mt-1" />
-                {isEditing ? (
-                  <textarea
-                    value={editData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    className="flex-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none resize-none"
-                    rows={2}
-                  />
-                ) : (
-                  <span className="text-gray-700">{lawyerData.address}</span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Professional Details */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-black mb-6 flex items-center space-x-2">
-              <Briefcase className="h-5 w-5 text-[#D6A767]" />
-              <span>Professional Details</span>
-            </h2>
-            
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <Scale className="h-5 w-5 text-[#D6A767]" />
-                <div>
-                  <span className="text-sm text-gray-500">Bar Number:</span>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editData.barNumber}
-                      onChange={(e) => handleInputChange('barNumber', e.target.value)}
-                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                    />
-                  ) : (
-                    <p className="text-gray-700 font-medium">{lawyerData.barNumber}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <Calendar className="h-5 w-5 text-[#D6A767]" />
-                <div>
-                  <span className="text-sm text-gray-500">Experience:</span>
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      value={editData.experience}
-                      onChange={(e) => handleInputChange('experience', e.target.value)}
-                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                    />
-                  ) : (
-                    <p className="text-gray-700 font-medium">{lawyerData.experience} years</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <Award className="h-5 w-5 text-[#D6A767] mt-1" />
-                <div>
-                  <span className="text-sm text-gray-500">Court Practice:</span>
-                  {isEditing ? (
-                    <textarea
-                      value={editData.courtPractice}
-                      onChange={(e) => handleInputChange('courtPractice', e.target.value)}
-                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none resize-none"
-                      rows={2}
-                    />
-                  ) : (
-                    <p className="text-gray-700 font-medium">{lawyerData.courtPractice}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <span className="text-[#D6A767] font-bold">₹</span>
-                <div>
-                  <span className="text-sm text-gray-500">Consultation Fee:</span>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editData.consultationFee}
-                      onChange={(e) => handleInputChange('consultationFee', e.target.value)}
-                      className="block w-full border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                    />
-                  ) : (
-                    <p className="text-gray-700 font-medium">{lawyerData.consultationFee}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Additional Information */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-black mb-6 flex items-center space-x-2">
-              <GraduationCap className="h-5 w-5 text-[#D6A767]" />
-              <span>Additional Information</span>
-            </h2>
-            
-            <div className="space-y-4">
-              <div>
-                <span className="text-sm text-gray-500">Education:</span>
-                {isEditing ? (
-                  <textarea
-                    value={editData.education}
-                    onChange={(e) => handleInputChange('education', e.target.value)}
-                    className="block w-full mt-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none resize-none"
-                    rows={2}
-                  />
-                ) : (
-                  <p className="text-gray-700 font-medium">{lawyerData.education}</p>
-                )}
-              </div>
-
-              <div>
-                <span className="text-sm text-gray-500">Languages:</span>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={editData.languages}
-                    onChange={(e) => handleInputChange('languages', e.target.value)}
-                    className="block w-full mt-1 border-b border-gray-300 focus:border-[#D6A767] focus:outline-none"
-                  />
-                ) : (
-                  <p className="text-gray-700 font-medium">{lawyerData.languages}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bio Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-bold text-black mb-6">About Me</h2>
-          {isEditing ? (
-            <textarea
-              value={editData.bio}
-              onChange={(e) => handleInputChange('bio', e.target.value)}
-              className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D6A767] focus:border-transparent resize-none"
-              rows={4}
-              placeholder="Tell clients about yourself, your experience, and your approach to law..."
-            />
-          ) : (
-            <p className="text-gray-700 leading-relaxed">{lawyerData.bio}</p>
-          )}
-        </div>
-
-        {/* Statistics */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-black mb-6">Professional Statistics</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 bg-[#E6D0B1] rounded-lg">
-              <div className="text-3xl font-bold text-[#D6A767] mb-2">{lawyerData.totalCases}</div>
-              <div className="text-sm text-gray-600">Total Cases</div>
-            </div>
-            <div className="text-center p-4 bg-[#E6D0B1] rounded-lg">
-              <div className="text-3xl font-bold text-[#D6A767] mb-2">{lawyerData.successRate}%</div>
-              <div className="text-sm text-gray-600">Success Rate</div>
-            </div>
-            <div className="text-center p-4 bg-[#E6D0B1] rounded-lg">
-              <div className="text-3xl font-bold text-[#D6A767] mb-2">{lawyerData.rating}</div>
-              <div className="text-sm text-gray-600">Average Rating</div>
-            </div>
-          </div>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 px-4">
+  {/* Top Row: About Me & Intro Video */}
+  {lawyerData.is_premium ? ( <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
+    {/* About Me - 65% */}
+    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[60%] flex flex-col justify-between">
+      <h2 className="card-title">About Me</h2>
+      <div className="mt-1 h-full">
+        {isEditing ? (
+         <>
+           <textarea
+            name="bio"
+            value={editData.bio || ''}
+            onChange={(e) =>
+              handleInputChange(e.target.name, e.target.value)
+            }
+            className="input-field w-full h-[90%] resize-none"
+            rows={5}
+            placeholder="Write a brief bio about yourself..."
+            maxLength={500}
+          />
+          <p className="text-sm text-gray-500 mt-2">
+  {editData.bio?.length || 0}/500 characters
+</p>
+         </>
+        ) : (
+          <p className="text-gray-700 leading-relaxed h-full">
+            {lawyerData.bio || "No bio available..."}
+          </p>
+        )}
       </div>
+    </div>
+
+    {/* Intro Video - 35% */}
+    <div className="bg-white rounded-2xl shadow-lg p-6 w-full lg:w-[40%] flex flex-col justify-between text-center">
+      <h2 className="card-title text-xl font-semibold">
+        <VideoIcon className="inline-block mr-2" /> Introduction Video
+      </h2>
+      <iframe
+        className="w-full h-[200px] md:h-[200px] lg:h-[200px] rounded-md mt-4"
+        src="https://www.youtube.com/embed/YanmpP6e69I"
+        title="Dr Moksha Kalyanram Abhiramula | Specialised in Corporate, Tax, IPR, ADR, M &amp; A | TEDx Speaker"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+      ></iframe>
+    </div>
+  </div>) : ( "" )}
+
+  {/* Bottom Row: Three Cards */}
+  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+    <h2 className="card-title">
+      <User /> Contact Information
+    </h2>
+     <div>
+              <h3 className="card-label">Enrollment Number</h3>
+              {isEditing ? (
+                <input
+                  name="enrollment_id"
+                  value={editData.enrollment_id || ''}
+                  readOnly
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  className="input-field bg-gray-100 cursor-not-allowed"
+                />
+              ) : (
+                <p className="card-value">{lawyerData.enrollment_id}</p>
+              )}
+            </div>
+            <div>
+              <h3 className="card-label">Email Address</h3>
+              {isEditing ? (
+                <input
+                  name="email"
+                  type="email"
+                  value={editData.email || ''}
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  className="input-field"
+                />
+              ) : (
+                <p className="card-value">{lawyerData.email}</p>
+              )}
+            </div>
+            <div>
+              <h3 className="card-label">Mobile Number</h3>
+              {isEditing ? (
+                <input
+                  name="mobile_Number"
+                  type="tel"
+                  value={editData.mobile_Number || ''}
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  className="input-field"
+                />
+              ) : (
+                <p className="card-value">{lawyerData.mobile_Number}</p>
+              )}
+            </div>
+            <div>
+              <h3 className="card-label">Office Address</h3>
+              {isEditing ? (
+                <textarea
+                  name="address"
+                  value={editData.address || ''}
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  className="input-field"
+                  rows={3}
+                  placeholder="Enter your office address..."
+                  maxLength={250}
+                />
+              ) : (
+                <p className="card-value">{lawyerData.address}</p>
+              )}
+            </div>
+  </div>
+
+  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+    <h2 className="card-title">
+      <Briefcase /> Professional Details
+    </h2>
+    <div>
+              <h3 className="card-label">Other Practice Areas</h3>
+              {isEditing ? (
+                <AutocompleteMultiSelect
+                  options={expertiseOptions}
+                  selected={editData.area_of_expertise || []}
+                  onSelect={(value) =>
+                    handleAddItem('area_of_expertise', value)
+                  }
+                  onRemove={(value) =>
+                    handleRemoveItem('area_of_expertise', value)
+                  }
+                  placeholder="Add expertise..."
+                />
+              ) : (
+                <p className="card-value font-semibold text-[#D6A767]">
+                  {displayExpertise}
+                </p>
+              )}
+            </div>
+            <div>
+              <h3 className="card-label">Practice Start Year</h3>
+              <p className="card-value bg-gray-100 rounded-md p-2">
+                {isEditing
+                  ? editData.practice_start_year || 'N/A'
+                  : displayedPracticeStartYear || 'N/A'}
+              </p>
+            </div>
+            <div>
+              <h3 className="card-label">Years of Experience</h3>
+              <p className="card-value bg-gray-100 rounded-md p-2">
+                {isEditing ? editData.experience || 0 : displayExperience} years
+              </p>
+            </div>
+            <div>
+              <h3 className="card-label">Cop registered bar association</h3>
+              {isEditing ? (
+                <input
+                  name="court_practice"
+                  value={editData.court_practice || ''}
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  className="input-field"
+                />
+              ) : (
+                <p className="card-value">{lawyerData.court_practice}</p>
+              )}
+            </div>
+  </div>
+
+  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+    <h2 className="card-title">
+      <GraduationCap /> Additional Information
+    </h2>
+     <div>
+              <h3 className="card-label">Cities of Practice</h3>
+              {isEditing ? (
+                <AutocompleteMultiSelect
+                  options={cityOptions}
+                  selected={editData.city || []}
+                  onSelect={(value) => handleAddItem('city', value)}
+                  onRemove={(value) => handleRemoveItem('city', value)}
+                  placeholder="Add a city..."
+                />
+              ) : (
+                <p className="card-value">{displayCities}</p>
+              )}
+            </div>
+            <div>
+              <h3 className="card-label">Education</h3>
+              {isEditing ? (
+                <input
+                  name="education"
+                  value={editData.education || ''}
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  className="input-field"
+                />
+              ) : (
+                <p className="card-value">{lawyerData.education}</p>
+              )}
+            </div>
+            <div>
+              <h3 className="card-label">Languages Known</h3>
+              {isEditing ? (
+                <AutocompleteMultiSelect
+                  options={languageOptions}
+                  selected={editData.languages || []}
+                  onSelect={(value) => handleAddItem('languages', value)}
+                  onRemove={(value) => handleRemoveItem('languages', value)}
+                  placeholder="Add a language..."
+                />
+              ) : (
+                <p className="card-value">{displayLanguages}</p>
+              )}
+            </div>
+  </div>
+</div>
+
+
+
+      </div>
+      <style jsx global>{`
+        .btn-primary {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.5rem 1rem;
+          background-color: #d6a767;
+          color: white;
+          border-radius: 0.5rem;
+          font-weight: 600;
+          transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+          background-color: #c19653;
+        }
+        .btn-secondary {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.5rem 1rem;
+          background-color: #6b7280;
+          color: white;
+          border-radius: 0.5rem;
+          font-weight: 600;
+          transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+          background-color: #4b5563;
+        }
+        .card-title {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: black;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .card-title svg {
+          color: #d6a767;
+        }
+        .card-label {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: #4b5563;
+          margin-bottom: 0.25rem;
+        }
+        .card-value {
+          font-size: 1rem;
+          color: #1f2937;
+          min-height: 24px;
+        }
+        .input-field {
+          width: 100%;
+          padding: 0.5rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.375rem;
+          transition:
+            border-color 0.2s,
+            box-shadow 0.2s;
+        }
+        .input-field:focus {
+          outline: none;
+          border-color: #d6a767;
+          box-shadow: 0 0 0 2px rgba(214, 167, 103, 0.3);
+        }
+      `}</style>
     </div>
   );
 }
