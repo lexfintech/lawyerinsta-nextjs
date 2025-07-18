@@ -157,8 +157,8 @@ export default function LawyerProfileView() {
       </h2>
       <iframe
         className="w-full h-[200px] md:h-[200px] lg:h-[200px] rounded-md mt-4"
-        src="https://www.youtube.com/embed/NZbmcl0QUaU"
-        title="The RajaSaab Telugu Teaser | Prabhas | Maruthi | Thaman | TG Vishwa Prasad | Dec 5 2025"
+        src="https://www.youtube.com/embed/YanmpP6e69I"
+        title="Dr Moksha Kalyanram Abhiramula | Specialised in Corporate, Tax, IPR, ADR, M &amp; A | TEDx Speaker"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
       ></iframe>
