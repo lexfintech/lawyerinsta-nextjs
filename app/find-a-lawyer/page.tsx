@@ -155,17 +155,18 @@ export default function FindLawyer() {
       <section className="bg-[#E6D0B1] py-10 ">
         <div className="w-[80%] mx-auto px-4 text-center max-w-none">
           <h1 className="text-5xl font-bold text-black mb-6">Find a Lawyer</h1>
-          {/* <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
             Search through 20+ lakh verified lawyers across India.
-          </p> */}
+          </p>
 
           <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
               <Select
                 options={cities}
                 value={selectedCity}
                 onChange={(option) => setSelectedCity(option)}
                 placeholder="Select City"
+                className="w-[100%] p-2"
               />
               {/* <Select
                 options={specializations}
@@ -175,7 +176,7 @@ export default function FindLawyer() {
               /> */}
               <button
                 onClick={handleSearch}
-                className="btn-primary flex items-center justify-center space-x-2"
+                className="btn-primary flex items-center justify-center space-x-1 h-[70%!important] w-full p-0"
               >
                 <Search className="h-5 w-5" />
                 <span>Search Lawyers</span>
