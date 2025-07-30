@@ -275,8 +275,6 @@ export default function LawyerProfile() {
 
     const finalData = {
       ...editData,
-      practice_start_year: derivedStartYear,
-      experience: calculatedExperience,
     };
 
     setLawyerData(finalData);
@@ -399,10 +397,9 @@ export default function LawyerProfile() {
       .join(', ') || '...';
   const displayCities = lawyerData.city?.join(', ') || '...';
   const displayLanguages = lawyerData.languages?.join(', ') || '...';
-  const displayedPracticeStartYear = getYearFromEnrollment(
-    lawyerData.enrollment_id,
-  );
+
   // const displayExperience = calculateExperience(displayedPracticeStartYear);
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const slideshowImages = lawyerData.images || [];
 
@@ -564,48 +561,68 @@ export default function LawyerProfile() {
           {lawyerData.is_premium ? (
             <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
               {/* About Me - 65% */}
-              <div className="relative w-full h-64 overflow-hidden rounded-xl">
+              {slideshowImages.length > 0 ? (
+                <div className="relative w-full h-64 overflow-hidden rounded-xl">
+                  <Image
+                    src={slideshowImages[currentSlide] || ''}
+                    alt={`Slide ${currentSlide + 1}`}
+                    className="transition-opacity duration-700 ease-in-out"
+                    width={800}
+                    height={400}
+                  />
+
+                  {/* Navigation Buttons */}
+                  <div className="absolute inset-0 flex justify-between items-center px-4">
+                    <button
+                      onClick={() =>
+                        setCurrentSlide((prev) =>
+                          prev === 0 ? slideshowImages.length - 1 : prev - 1,
+                        )
+                      }
+                      className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      onClick={() =>
+                        setCurrentSlide(
+                          (prev) => (prev + 1) % slideshowImages.length,
+                        )
+                      }
+                      className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
+                    >
+                      ›
+                    </button>
+                  </div>
+                </div>
+              ) : (
                 <Image
-                  src={slideshowImages[currentSlide] || ''}
-                  alt={`Slide ${currentSlide + 1}`}
-                  className="transition-opacity duration-700 ease-in-out"
+                  src="/assets/images/placeholderImage.webp"
+                  alt="Placeholder"
                   width={800}
                   height={400}
+                  className="w-full h-64 object-cover rounded-xl"
                 />
-
-                {/* Navigation Buttons */}
-                <div className="absolute inset-0 flex justify-between items-center px-4">
-                  <button
-                    onClick={() =>
-                      setCurrentSlide((prev) =>
-                        prev === 0 ? slideshowImages.length - 1 : prev - 1,
-                      )
-                    }
-                    className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    onClick={() =>
-                      setCurrentSlide(
-                        (prev) => (prev + 1) % slideshowImages.length,
-                      )
-                    }
-                    className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
-                  >
-                    ›
-                  </button>
-                </div>
-              </div>
+              )}
 
               {/* Intro Video - 35% */}
-              <iframe
-                className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1"
-                src={`${lawyerData.intro_video_url || ''}`}
-                title="Intro Video"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              ></iframe>
+              {lawyerData.intro_video_url ? (
+                <iframe
+                  className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1"
+                  src={`${lawyerData.intro_video_url || ''}`}
+                  title="Intro Video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                ></iframe>
+              ) : (
+                <Image
+                  src="/assets/images/youtube.jpg"
+                  alt="Intro Video Placeholder"
+                  width={400}
+                  height={200}
+                  className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1 object-cover"
+                />
+              )}
             </div>
           ) : (
             ''
@@ -725,10 +742,12 @@ export default function LawyerProfile() {
                   onChange={(e) =>
                     handleInputChange(e.target.name, e.target.value)
                   }
-                  className="input-field bg-gray-100"
+                  className="input-field"
                 />
               ) : (
-                <p className="card-value">{lawyerData.practice_start_year}</p>
+                <p className="card-value">
+                  {lawyerData.practice_start_year}+ Years
+                </p>
               )}
             </div>
             <div>
