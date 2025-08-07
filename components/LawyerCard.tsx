@@ -84,7 +84,9 @@ export default function LawyerCard({ lawyer, specialization, city }: Props) {
               )}
             </div>
             {lawyer.is_premium ? (
-              <p className="text-sm text-gray-600">20+ Years Experience</p>
+              <p className="text-sm text-gray-600">
+                {lawyer.practice_start_year}+ Years Experience
+              </p>
             ) : (
               <p className="text-sm text-gray-600">
                 {`${displayExperience} Years Experience` || 'N/A'}

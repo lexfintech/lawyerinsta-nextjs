@@ -120,6 +120,8 @@ type LawyerData = {
   education?: string;
   languages?: string[];
   bio?: string;
+  intro_video_url?: string;
+  images?: string[];
 };
 
 // --- REUSABLE AUTOCOMPLETE COMPONENT ---
@@ -273,8 +275,6 @@ export default function LawyerProfile() {
 
     const finalData = {
       ...editData,
-      practice_start_year: derivedStartYear,
-      experience: calculatedExperience,
     };
 
     setLawyerData(finalData);
@@ -394,28 +394,24 @@ export default function LawyerProfile() {
   const displayExpertise =
     lawyerData.area_of_expertise
       ?.map((e) => getLabel(expertiseOptions, e))
-      .join(', ') || 'Not specified';
-  const displayCities = lawyerData.city?.join(', ') || 'Not specified';
-  const displayLanguages = lawyerData.languages?.join(', ') || 'Not specified';
-  const displayedPracticeStartYear = getYearFromEnrollment(
-    lawyerData.enrollment_id,
-  );
-  const displayExperience = calculateExperience(displayedPracticeStartYear);
+      .join(', ') || '...';
+  const displayCities = lawyerData.city?.join(', ') || '...';
+  const displayLanguages = lawyerData.languages?.join(', ') || '...';
 
-  const slideshowImages = [
-    '/assets/images/slide1.jpg',
-    '/assets/images/slide2.jpg',
-    '/assets/images/slide3.jpg',
-  ];
+  // const displayExperience = calculateExperience(displayedPracticeStartYear);
 
   const [currentSlide, setCurrentSlide] = useState(0);
+  const slideshowImages = lawyerData.images || [];
 
   useEffect(() => {
+    if (!slideshowImages || slideshowImages.length === 0) return;
+
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slideshowImages.length);
-    }, 3000); // Change slide every 3 seconds
+    }, 3000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [slideshowImages]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -565,48 +561,68 @@ export default function LawyerProfile() {
           {lawyerData.is_premium ? (
             <div className="lg:col-span-3 flex flex-col lg:flex-row gap-6">
               {/* About Me - 65% */}
-              <div className="relative w-full h-64 overflow-hidden rounded-xl">
-                <Image
-                  src={slideshowImages[currentSlide]}
-                  alt={`Slide ${currentSlide + 1}`}
-                  layout="fill"
-                  objectFit="fit"
-                  className="transition-opacity duration-700 ease-in-out"
-                />
+              {slideshowImages.length > 0 ? (
+                <div className="relative w-full h-64 overflow-hidden rounded-xl">
+                  <Image
+                    src={slideshowImages[currentSlide] || ''}
+                    alt={`Slide ${currentSlide + 1}`}
+                    className="transition-opacity duration-700 ease-in-out"
+                    width={800}
+                    height={400}
+                  />
 
-                {/* Navigation Buttons */}
-                <div className="absolute inset-0 flex justify-between items-center px-4">
-                  <button
-                    onClick={() =>
-                      setCurrentSlide((prev) =>
-                        prev === 0 ? slideshowImages.length - 1 : prev - 1,
-                      )
-                    }
-                    className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    onClick={() =>
-                      setCurrentSlide(
-                        (prev) => (prev + 1) % slideshowImages.length,
-                      )
-                    }
-                    className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
-                  >
-                    ›
-                  </button>
+                  {/* Navigation Buttons */}
+                  <div className="absolute inset-0 flex justify-between items-center px-4">
+                    <button
+                      onClick={() =>
+                        setCurrentSlide((prev) =>
+                          prev === 0 ? slideshowImages.length - 1 : prev - 1,
+                        )
+                      }
+                      className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      onClick={() =>
+                        setCurrentSlide(
+                          (prev) => (prev + 1) % slideshowImages.length,
+                        )
+                      }
+                      className="bg-black bg-opacity-50 text-white px-3 py-2 rounded-full hover:bg-opacity-70"
+                    >
+                      ›
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <Image
+                  src="/assets/images/placeholderImage.webp"
+                  alt="Placeholder"
+                  width={800}
+                  height={400}
+                  className="w-full h-64 object-cover rounded-xl"
+                />
+              )}
 
               {/* Intro Video - 35% */}
-              <iframe
-                className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1"
-                src="https://www.youtube.com/embed/CkiX-k-COJY"
-                title="Dr Moksha Kalyanram Abhiramula | Specialised in Corporate, Tax, IPR, ADR, M &amp; A | TEDx Speaker"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              ></iframe>
+              {lawyerData.intro_video_url ? (
+                <iframe
+                  className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1"
+                  src={`${lawyerData.intro_video_url || ''}`}
+                  title="Intro Video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                ></iframe>
+              ) : (
+                <Image
+                  src="/assets/images/youtube.jpg"
+                  alt="Intro Video Placeholder"
+                  width={400}
+                  height={200}
+                  className="w-full h-[200px] md:h-[200px] lg:h-[250px] rounded-md mt-1 object-cover"
+                />
+              )}
             </div>
           ) : (
             ''
@@ -673,7 +689,7 @@ export default function LawyerProfile() {
             <h2 className="card-title">
               <Briefcase /> Professional Details
             </h2>
-            <div>
+            {/* <div>
               <h3 className="card-label">Enrollment Number</h3>
               {isEditing ? (
                 <input
@@ -688,7 +704,7 @@ export default function LawyerProfile() {
               ) : (
                 <p className="card-value">{lawyerData.enrollment_id}</p>
               )}
-            </div>
+            </div> */}
             <div>
               <h3 className="card-label">Other Practice Areas</h3>
               {isEditing ? (
@@ -719,7 +735,20 @@ export default function LawyerProfile() {
             </div> */}
             <div>
               <h3 className="card-label">Years of Experience</h3>
-              <p className="card-value bg-gray-100 rounded-md p-2">20+ years</p>
+              {isEditing ? (
+                <input
+                  name="practice_start_year"
+                  value={editData.practice_start_year || ''}
+                  onChange={(e) =>
+                    handleInputChange(e.target.name, e.target.value)
+                  }
+                  className="input-field"
+                />
+              ) : (
+                <p className="card-value">
+                  {lawyerData.practice_start_year}+ Years
+                </p>
+              )}
             </div>
             <div>
               <h3 className="card-label">Cop registered bar association</h3>
